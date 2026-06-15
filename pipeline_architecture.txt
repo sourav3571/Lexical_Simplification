@@ -1,0 +1,107 @@
+========================================================================
+            LEXICAL SIMPLIFICATION PIPELINE ARCHITECTURE & JUSTIFICATION
+========================================================================
+
+Below is the end-to-end data flow showing how a raw sentence is analyzed,
+complex words are identified, synonym candidates are dynamically generated,
+and the neural ranking model selects the optimal replacement.
+
+============================================================
+              PIPELINE FLOW DIAGRAM (ASCII)
+============================================================
+
+    [Raw Input Sentence]
+            |
+            v
+     1. Preprocessing (spaCy)
+            |   (Assigns POS tags, lemmas, and offsets)
+            v
+     2. Context-Aware CWI (Complex Word Identification)
+            |   
+            +---> [Not Complex] ---> (Keep word as is)
+            |   
+            v [Complex Word Found]
+     3. Word Sense Disambiguation (BERT + WordNet)
+            |   (Identifies exact contextual meaning)
+            v
+     4. Candidate Generation (WordNet + GloVe + BERT MLM)
+            |   (Retrieves synonyms & filters simpler options)
+            v
+     5. Contextual Neural Ranking (Trained MLP Ranker)
+            |   (Scores based on: Semantic Fit * Simplicity Fit)
+            v
+     6. Substitution & Inflection
+            |   (Conjugates synonym and replaces in sentence)
+            v
+   [Simplified Output Sentence]
+
+
+============================================================
+                 STAGE-BY-STAGE SEQUENCE JUSTIFICATION
+============================================================
+
+The ordering of the 6 stages is engineered to optimize computational
+efficiency and linguistic accuracy:
+
+1. Stage 1 (Preprocessing) is first:
+   - What it does: Resolves grammatical tags (POS tags) and root forms (lemmas).
+   - Why: This immediately filters out structural words (e.g. prepositions,
+     pronouns, determiners, punctuation). By doing this first, we prevent
+     wasting CPU/GPU memory running deep learning models on words that cannot
+     be simplified.
+
+2. Stage 2 (Context-Aware CWI) is second:
+   - What it does: Evaluates complexity using BERT surprisal, word frequency,
+     and length.
+   - Why: Typically, only 10% to 20% of words in a sentence are complex.
+     By identifying them early, we filter out simple words and ensure the
+     expensive Word Sense Disambiguation and Candidate Generation steps are
+     only run on actual complex target words.
+
+3. Stage 3 (Word Sense Disambiguation) is third:
+   - What it does: Finds the exact dictionary meaning (synset) of the word.
+   - Why: A word like "bank" has multiple meanings (financial bank vs. river bank).
+     Finding the exact meaning in context first ensures that we only generate
+     relevant synonyms, completely avoiding out-of-context candidates.
+
+4. Stage 4 (Candidate Generation & Filtering) is fourth:
+   - What it does: Pulls candidate synonyms from WordNet and GloVe vectors,
+     then filters them.
+   - Why: This narrows down a large pool of possible words to a small,
+     high-quality list of candidates that are strictly simpler and share the
+     same grammatical tag.
+
+5. Stage 5 (Contextual Neural Ranking) is fifth:
+   - What it does: Uses the trained neural network to score the candidates.
+   - Why: It evaluates each candidate on both semantic fit (meaning preservation)
+     and simplicity fit. The final score is computed as:
+     Score = Semantic_Fit * Simplicity_Fit
+     This acts as an AND gate: a word must be both grammatically correct and
+     easier to read.
+
+6. Stage 6 (Substitution & Inflection) is last:
+   - What it does: Conjugates the candidate word and replaces the target in the sentence.
+   - Why: Candidate generators provide root lemmas (e.g. "requirement" instead of
+     "requirements"). Inflecting the word at the very end ensures the replacement
+     perfectly matches the original word's number, tense, and capitalization,
+     preventing grammatical errors.
+
+
+============================================================
+                 WHY THIS DESIGN IS THE BEST
+============================================================
+
+1. Zero Direct Dataset Mapping (Pure Generalization)
+   - Candidates are generated dynamically from WordNet and GloVe vector spaces
+     rather than a static lookup database. This allows the system to simplify
+     completely novel, out-of-vocabulary words.
+
+2. Multi-Gated Feature Fusion
+   - Instead of looking at just word frequency or context, the neural ranker
+     combines BERT sentence representations, local MLM grammar, and simplicity
+     metrics to ensure high fluency.
+
+3. BERT Contextual Redundancy Check
+   - The model naturally penalizes words that cause repetitive phrasing (e.g.
+     changing "ambiguous" to "unclear" in "ambiguous and unclear" is scored
+     lower because of semantic overlap).
