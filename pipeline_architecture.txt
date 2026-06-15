@@ -2,79 +2,142 @@
                       PIPELINE SYSTEM FLOWCHART
 ========================================================================
 
-                 +-----------------------------+
-                 |      Dataset Directory      |
-                 +-----------------------------+
-                                |
-                                v
-                   /-------------------------\
-                  <   Is 'lex_mturk.txt'      >
-                  <   present in workspace?   >
-                   \-------------------------/
-                        /             \
-                  (Yes)/               \(No)
-                      v                 v
-             +---------------+   +---------------+
-             | lex_mturk.txt |   |  BenchLS.txt  |
-             |   (Primary)   |   |  (Fallback)   |
-             +---------------+   +---------------+
-                      \                 /
-                       \---------------+
-                               |
-                               v
-             +-----------------------------------+
-             |    LexicalSimplificationDataset   |
-             +-----------------------------------+
-                               |
-                               v
-                     [ Raw Input Sentence ]
-                               |
-                               v
-             +-----------------------------------+
-             |       1. Preprocessing            |
-             |       (POS/Lemma Tagging)         |
-             +-----------------------------------+
-                               |
-                               v
-             +-----------------------------------+
-             |    2. Context-Aware CWI           |
-             |   (Complexity Threshold Gating)   |
-             +-----------------------------------+
-                               |
-                   /-----------------------\
-                  <     Is Word Complex?    >
-                   \-----------------------/
-                        /             \
-                  (Yes)/               \(No)
-                      v                 v
-             +---------------+   +---------------+
-             |  Target Word  |   |   Skip Word   |
-             |   Selected    |   | (Keep As-Is)  |
-             +---------------+   +---------------+
-                      |
-                      v
-             +-----------------------------------+
-             |   3. Word Sense Disambiguation    |
-             |      (WordNet Synset Match)       |
-             +-----------------------------------+
-                               |
-                               v
-             +-----------------------------------+
-             |      4. Candidate Generation      |
-             |   (WordNet / GloVe / BERT MLM)    |
-             +-----------------------------------+
-                               |
-                               v
-             +-----------------------------------+
-             |    5. Contextual Neural Ranker    |
-             |  (Semantic x Simplicity Fusion)   |
-             +-----------------------------------+
-                               |
-                               v
-             +-----------------------------------+
-             |   6. Substitution & Inflection    |
-             |   (Morphology & Offset Shifting)  |
-             +-----------------------------------+
-                               |
-                               v
-                    [ Simplified Sentence ]
+                 +-----------------------------------+
+                 |        Raw Input Sentence         |
+                 +-----------------------------------+
+                                   |
+                                   v
+                 +-----------------------------------+
+                 |         1. Preprocessing          |
+                 |     - SpaCy POS & Lemma tagging   |
+                 |     - Filter content words        |
+                 +-----------------------------------+
+                                   |
+                                   v
+                 +-----------------------------------+
+                 |      2. Context-Aware CWI         |
+                 |   - Scoring: 30% Inherent Bias    |
+                 |              50% Embedding Drift  |
+                 |              20% Prediction Spread|
+                 |   - Dynamic mean/std gating       |
+                 +-----------------------------------+
+                                   |
+                       /-----------------------\
+                      <     Is Word Complex?    >
+                       \-----------------------/
+                            /             \
+                      (Yes)/               \(No)
+                          v                 v
+                 +---------------+   +---------------+
+                 |  Target Word  |   |   Skip Word   |
+                 |   Selected    |   | (Keep As-Is)  |
+                 | (e.g. 'nature'|   |  (e.g. 'boy', |
+                 |  personality) |   |    'good')    |
+                 +---------------+   +---------------+
+                          |
+                          v
+                 +-----------------------------------+
+                 |   3. Word Sense Disambiguation    |
+                 |   - Cosine Similarity between     |
+                 |     context embedding and Gloss   |
+                 |     definition embeddings         |
+                 +-----------------------------------+
+                                   |
+                                   v
+                 +-----------------------------------+
+                 |      4. Candidate Generation      |
+                 |   - Extract from WordNet (hyper/  |
+                 |     hyponyms/sisters) & BERT MLM  |
+                 |   - Filtering: Inherent Simplicity|
+                 |     (margin +0.15) & Semantic Rel |
+                 +-----------------------------------+
+                                   |
+                                   v
+                 +-----------------------------------+
+                 |    5. Contextual Neural Ranker    |
+                 |   - Predict ranking using MLM,    |
+                 |     CosSim, SurpRed, & Fluency    |
+                 +-----------------------------------+
+                                   |
+                                   v
+                 +-----------------------------------+
+                 |      6. 4-Gate BERT Validator     |
+                 |   - Gate 1: MLM Prob Preference   |
+                 |   - Gate 2: Cosine Similarity     |
+                 |   - Gate 3: Fluency Log-Likelihood|
+                 |   - Gate 4: Complexity Reduction  |
+                 +-----------------------------------+
+                                   |
+                       /-----------------------\
+                      <  Passes all 4 Gates?   >
+                       \-----------------------/
+                            /             \
+                      (Yes)/               \(No)
+                          v                 v
+                 +-------------------+   +---------------+
+                 | Accept Candidate  |   | Try next ranked|
+                 |  (Inflect casing) |   |   candidate   |
+                 +-------------------+   +---------------+
+                          |
+                          v
+                 +-----------------------------------+
+                 |   7. Parallel Substitution        |
+                 |   - Avoid cascading errors by     |
+                 |     substituting simultaneously   |
+                 +-----------------------------------+
+                                   |
+                                   v
+                        [ Simplified Sentence ]
+
+
+========================================================================
+                     DETAILED STAGE JUSTIFICATION
+========================================================================
+
+1. PREPROCESSING
+   Uses spaCy to parse POS tags and extract nouns, verbs, adjectives, adverbs, and
+   proper nouns. This ensures grammatical correctness and ignores function words.
+
+2. CONTEXT-AWARE CWI (COMPLEX WORD IDENTIFICATION)
+   Uses a 100% BERT-driven, POS-independent model:
+   - Inherent Bias (30%): Extracted from MLM output layer biases (correlated with
+     general frequency) with a subword token length penalty.
+   - Embedding Drift (50%): Measures cosine distance between context embedding and
+     a concrete reference template ("I see the [word]."). Distinguishes abstract,
+     figurative senses (high drift, complex) from concrete senses (low drift, simple).
+   - Prediction Spread (20%): Evaluates top-10 prediction entropy at the word mask,
+     capturing lexical and syntactic uncertainty.
+   - Dynamic Threshold: Flags a word as complex if it exceeds (mean + 1.0 * std_dev)
+     or falls in the top 25% of content words in the sentence (minimum baseline: 0.33).
+
+3. WORD SENSE DISAMBIGUATION (WSD)
+   Matches the context embedding of the target word with definition sentence
+   embeddings of all WordNet synsets. The highest cosine similarity determines
+   the exact semantic sense.
+
+4. CANDIDATE GENERATION & FILTERING
+   Aggregates raw candidates from WordNet synsets, hypernyms, hyponyms, sister terms,
+   and BERT MLM. Filters candidates using:
+   - Inherent Simplicity: Candidate inherent complexity must not exceed target word
+     complexity + 0.15.
+   - Semantic Relation: Candidate must be semantically linked in WordNet synsets.
+   - Grammatical / Contextual Fit: BERT MLM probability at the mask >= 0.0005.
+   - Meaning Preservation: Sentence embedding similarity (orig vs cand) > 0.85.
+
+5. CONTEXTUAL NEURAL RANKER
+   Applies a trained PyTorch Gated Fusion network (`best_model.pt`) that scores
+   each candidate based on four neural features: MLM probability, contextual word
+   cosine similarity, surprisal reduction, and sentence fluency change.
+
+6. 4-GATE BERT VALIDATION
+   Individually verifies candidates in order of their rank score. A candidate is
+   only accepted if it passes all four gates:
+   - Gate 1 (MLM Pref): Candidate probability is higher than original, or >= 0.001.
+   - Gate 2 (Similarity): Sentence cosine sim > 0.85 AND word-level cosine sim > 0.65.
+   - Gate 3 (Fluency): Fluency score does not drop by more than 0.7 log-loss units.
+   - Gate 4 (Complexity Reduction): Contextual complexity score of the candidate
+     in the new sentence must be lower than that of the original word.
+
+7. PARALLEL SUBSTITUTION
+   Replaces all accepted words at once using a parallel replacer, adjusting casing
+   (capitalization) dynamically, while avoiding index-shifting cascading bugs.
