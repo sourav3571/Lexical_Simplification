@@ -209,7 +209,7 @@ class AILexicalSimplifier:
         CAND_FREQ_MIN  = 4.5
         MLM_PROB_MIN   = 0.005
         BEST_SCORE_MIN = 0.50
-        MARGIN_MIN     = 0.03
+        MARGIN_MIN     = 0.01
         # ---------------------------------------------------------------------
 
         if verbose:
@@ -476,16 +476,17 @@ class AILexicalSimplifier:
 
             best   = scored_candidates[0]
             second = scored_candidates[1] if len(scored_candidates) > 1 else None
-            margin = (best['rank_score'] - second['rank_score']) if second else 1.0
+            margin = (best['semantic_priority'] - second['semantic_priority']) if second else 1.0
+            best_score = best['semantic_priority']
             best_freq_gain = wordfreq.zipf_frequency(best['candidate'], 'en') - orig_zipf
 
             if verbose:
                 print(f"\nSTAGE 5 - Confidence checks  (winner = '{best['candidate']}'):")
-                ok_score = best['rank_score'] >= BEST_SCORE_MIN
-                ok_marg  = margin             >= MARGIN_MIN
-                ok_mlm   = best['mlm_prob']   >= MLM_PROB_MIN
-                ok_gain  = best_freq_gain      >= FREQ_GAIN_MIN
-                print(f"  best_score  : {best['rank_score']:.4f}  "
+                ok_score = best_score >= BEST_SCORE_MIN
+                ok_marg  = margin     >= MARGIN_MIN
+                ok_mlm   = best['mlm_prob'] >= MLM_PROB_MIN
+                ok_gain  = best_freq_gain  >= FREQ_GAIN_MIN
+                print(f"  best_score  : {best_score:.4f}  "
                       f"(need >= {BEST_SCORE_MIN})  {'PASS' if ok_score else 'FAIL'}")
                 print(f"  margin      : {margin:.4f}  "
                       f"(need >= {MARGIN_MIN})   {'PASS' if ok_marg else 'FAIL'}")
@@ -495,9 +496,9 @@ class AILexicalSimplifier:
                       f"(need >= {FREQ_GAIN_MIN})    {'PASS' if ok_gain else 'FAIL'}")
 
             # Confidence gate
-            if best['rank_score'] < BEST_SCORE_MIN:
+            if best_score < BEST_SCORE_MIN:
                 if verbose:
-                    print(f"\nSTAGE 6 - SKIPPED: best score {best['rank_score']:.4f} "
+                    print(f"\nSTAGE 6 - SKIPPED: best score {best_score:.4f} "
                           f"< {BEST_SCORE_MIN}. Keeping '{word}'.")
                 continue
             if margin < MARGIN_MIN:
