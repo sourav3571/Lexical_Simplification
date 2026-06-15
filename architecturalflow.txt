@@ -1,0 +1,28 @@
+┌─────────────────────────────────────────────────────────────────────┐
+│                                                                     │
+│  OFFLINE (one time)              ONLINE (every sentence)            │
+│  ─────────────────               ─────────────────────              │
+│                                                                     │
+│  LexMTurk ──┐                   New Sentence                        │
+│  NNSeval  ──┼──► Dataset            │                              │
+│  Synthetic──┘    (8000)             ▼                              │
+│                     │          spaCy → tokens + POS                │
+│                     ▼               │                              │
+│               DataLoader            ▼                              │
+│               (batch=16)       wordfreq → complex words            │
+│                     │               │                              │
+│                     ▼               ▼                              │
+│               BERT+Ranker      WordNet+GloVe → candidates          │
+│               Model                 │                              │
+│                     │               ▼                              │
+│               MSE Loss         Trained Model → scores              │
+│               backward              │                              │
+│                     │               ▼                              │
+│               Save best        Best candidate                      │
+│               weights               │                              │
+│                     │               ▼                              │
+│               best_model.pt    Replace in sentence                 │
+│                     │               │                              │
+│                     └───load────────┘                              │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘

@@ -1,0 +1,11 @@
+torch
+transformers
+spacy
+nltk
+wordfreq
+gensim
+scikit-learn
+pandas
+numpy
+matplotlib
+tqdm

@@ -1,0 +1,13 @@
+# Python Caches
+__pycache__/
+*.pyc
+
+# PyTorch Trained Weights (Large File)
+best_model.pt
+
+# Plots and Logs
+loss_curves.png
+test_run.log
+
+# Temp directory
+.sixth/
