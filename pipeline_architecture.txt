@@ -1,192 +1,80 @@
 ========================================================================
-            LEXICAL SIMPLIFICATION PIPELINE ARCHITECTURE & JUSTIFICATION
+                      PIPELINE SYSTEM FLOWCHART
 ========================================================================
 
-Below is the end-to-end data flow showing how datasets are initialized,
-how a raw sentence is analyzed, complex words are identified, synonym 
-candidates are dynamically generated, and the neural ranking model selects 
-the optimal replacement.
-
-============================================================
-              PIPELINE FLOW DIAGRAM (ASCII)
-============================================================
-
-  +----------------------------------------------------------------------------------+
-  | 0. DATASET LOADING & CONFIGURATION (dataset.py / config.py)                      |
-  |                                                                                  |
-  |  * Scan Path  : Detects dataset files in current workspace directory             |
-  |  * Loading Priority Order:                                                       |
-  |     - 1. 'lex_mturk.txt' (Primary dataset for training the neural ranker)         |
-  |     - 2. 'BenchLS.txt'   (Fallback / evaluation benchmark dataset)               |
-  |  * Dynamic Parse: Automatically detects and parses tab-separated format          |
-  |    with or without target position and rank indexes                              |
-  +----------------------------------------------------------------------------------+
-              |
-              v
-    [Raw Input Sentence] (e.g., "The results were ambiguous.")
-              |
-              v
-  +----------------------------------------------------------------------------------+
-  | 1. PREPROCESSING STAGE (preprocessing.py)                                        |
-  |                                                                                  |
-  |  * Tokenization : Splits sentence into words (Tokens)                            |
-  |  * POS Tagging  : Marks parts of speech (NOUN, VERB, ADJ, ADV, etc.)             |
-  |  * Lemmatization: Converts words to root dictionary form (e.g., "were" -> "be")  |
-  |  * Filtering    : Marks pronouns, prepositions, punctuation as non-simplifiable  |
-  +----------------------------------------------------------------------------------+
-              |
-              | (List of content word tokens with POS and Lemma tags)
-              v
-  +----------------------------------------------------------------------------------+
-  | 2. COMPLEX WORD IDENTIFICATION (contextual_cwi.py)                               |
-  |                                                                                  |
-  |  For each candidate content word, calculate complexity metrics:                  |
-  |   - Zipf Frequency Score (Value from 0 to 8; lower = rarer/harder)               |
-  |   - BERT Surprisal Score (Negative log-probability; higher = stranger context)   |
-  |   - Length & Syllable Count (Number of letters and spoken syllables)             |
-  |   - Familiarity check (Is the word NOT in Oxford 3000 / Dale-Chall lists?)       |
-  +----------------------------------------------------------------------------------+
-              |
-              v
-       [ Is Word Complex? ]
-         /            \
-    (No) /              \ (Yes)
-        v                v
-  [Retain Word]   [ Target Word Selected ]  (e.g., "ambiguous", Adjective)
-                         |
-                         v
-  +----------------------------------------------------------------------------------+
-  | 3. WORD SENSE DISAMBIGUATION (word_sense_disambiguation.py)                      |
-  |                                                                                  |
-  |  * Lookup WordNet: Fetch all dictionary definitions (Synsets) for the target word|
-  |  * Context Encoding: Convert sentence, definitions, & examples to BERT embeddings |
-  |  * Math Comparison: Calculate Cosine Similarity between BERT context vectors     |
-  |  * Selection: Choose the Synset with the highest similarity score                |
-  +----------------------------------------------------------------------------------+
-              |
-              | (Disambiguated Synset, e.g., Synset("equivocal.a.01"))
-              v
-  +----------------------------------------------------------------------------------+
-  | 4. CANDIDATE GENERATION & FILTERING (candidate_generator.py)                     |
-  |                                                                                  |
-  |  * Gather Pools:                                                                 |
-  |     - WordNet: Pull synonyms, hypernyms (broader terms), and sister terms        |
-  |     - GloVe Vectors: Find 500 closest words in semantic vector space             |
-  |     - BERT MLM: Hide target, retrieve 50 words BERT predicts fit best            |
-  |  * Filter Pools:                                                                 |
-  |     - Remove multi-word phrases, non-alphabetic tokens, and capital mismatches   |
-  |     - Remove any word that has a LOWER Zipf frequency than the target word       |
-  +----------------------------------------------------------------------------------+
-              |
-              | (List of simpler candidate synonyms, e.g., ["unclear", "vague"])
-              v
-  +----------------------------------------------------------------------------------+
-  | 5. CONTEXTUAL NEURAL RANKING (model.py / train.py)                               |
-  |                                                                                  |
-  |  Feed candidates into custom-trained PyTorch Gated Fusion network:               |
-  |                                                                                  |
-  |   [ Semantic Fit Sub-Network ]           [ Simplicity Fit Sub-Network ]          |
-  |   - BERT contextual distance             - Zipf frequency gain                  |
-  |   - BERT MLM fit probability             - Syllable reduction count              |
-  |   - GloVe static cosine similarity       - Character length reduction count      |
-  |   - WordNet path distance similarity                                             |
-  |                \                                       /                         |
-  |                 v                                     v                          |
-  |           Semantic Score                        Simplicity Score                 |
-  |                 \                                       /                         |
-  |                  +---->  [ Final Score = Sem * Simp ]  <-- (AND Gate)            |
-  |                                         |                                        |
-  |                                         v                                        |
-  |                             Ranked list of candidates                            |
-  +----------------------------------------------------------------------------------+
-              |
-              | (Winning candidate word, e.g., "unclear")
-              v
-  +----------------------------------------------------------------------------------+
-  | 6. SUBSTITUTION & INFLECTION (inference.py)                                      |
-  |                                                                                  |
-  |  * Inflection: Conjugate winning word to match target's original tense, number   |
-  |    and case (e.g., matching plural "obligations" -> "duties")                    |
-  |  * Replacement: Swap original word with inflected candidate in the sentence      |
-  |  * Index Alignment: Adjust start/end character offsets for any subsequent words  |
-  +----------------------------------------------------------------------------------+
-              |
-              v
-   [ Simplified Output Sentence ]  (e.g., "The results were unclear.")
-
-
-============================================================
-                 STAGE-BY-STAGE SEQUENCE JUSTIFICATION
-============================================================
-
-The ordering of the stages is engineered to optimize computational
-efficiency and linguistic accuracy:
-
-1. Stage 0 (Dataset Loading & Configuration) is first:
-   - What it does: Scans for dataset files, checks priority (lex_mturk.txt -> BenchLS.txt),
-     and loads configurations for downstream components.
-   - Why: This sets up all hyper-parameters, thresholds, and paths so that they can be
-     referenced consistently across training, evaluation, and inference runs.
-
-2. Stage 1 (Preprocessing) is second:
-   - What it does: Resolves grammatical tags (POS tags) and root forms (lemmas).
-   - Why: This immediately filters out structural words (e.g. prepositions,
-     pronouns, determiners, punctuation). By doing this first, we prevent
-     wasting CPU/GPU memory running deep learning models on words that cannot
-     be simplified.
-
-3. Stage 2 (Context-Aware CWI) is third:
-   - What it does: Evaluates complexity using BERT surprisal, word frequency,
-     and length.
-   - Why: Typically, only 10% to 20% of words in a sentence are complex.
-     By identifying them early, we filter out simple words and ensure the
-     expensive Word Sense Disambiguation and Candidate Generation steps are
-     only run on actual complex target words.
-
-4. Stage 3 (Word Sense Disambiguation) is fourth:
-   - What it does: Finds the exact dictionary meaning (synset) of the word.
-   - Why: A word like "bank" has multiple meanings (financial bank vs. river bank).
-     Finding the exact meaning in context first ensures that we only generate
-     relevant synonyms, completely avoiding out-of-context candidates.
-
-5. Stage 4 (Candidate Generation & Filtering) is fifth:
-   - What it does: Pulls candidate synonyms from WordNet and GloVe vectors,
-     then filters them.
-   - Why: This narrows down a large pool of possible words to a small,
-     high-quality list of candidates that are strictly simpler and share the
-     same grammatical tag.
-
-6. Stage 5 (Contextual Neural Ranking) is sixth:
-   - What it does: Uses the trained neural network to score the candidates.
-   - Why: It evaluates each candidate on both semantic fit (meaning preservation)
-     and simplicity fit. The final score is computed as:
-     Score = Semantic_Fit * Simplicity_Fit
-     This acts as an AND gate: a word must be both grammatically correct and
-     easier to read.
-
-7. Stage 6 (Substitution & Inflection) is last:
-   - What it does: Conjugates the candidate word and replaces the target in the sentence.
-   - Why: Candidate generators provide root lemmas (e.g. "requirement" instead of
-     "requirements"). Inflecting the word at the very end ensures the replacement
-     perfectly matches the original word's number, tense, and capitalization,
-     preventing grammatical errors.
-
-
-============================================================
-                 WHY THIS DESIGN IS THE BEST
-============================================================
-
-1. Zero Direct Dataset Mapping (Pure Generalization)
-   - Candidates are generated dynamically from WordNet and GloVe vector spaces
-     rather than a static lookup database. This allows the system to simplify
-     completely novel, out-of-vocabulary words.
-
-2. Multi-Gated Feature Fusion
-   - Instead of looking at just word frequency or context, the neural ranker
-     combines BERT sentence representations, local MLM grammar, and simplicity
-     metrics to ensure high fluency.
-
-3. BERT Contextual Redundancy Check
-   - The model naturally penalizes words that cause repetitive phrasing (e.g.
-     changing "ambiguous" to "unclear" in "ambiguous and unclear" is scored
-     lower because of semantic overlap).
+                 +-----------------------------+
+                 |      Dataset Directory      |
+                 +-----------------------------+
+                                |
+                                v
+                   /-------------------------\
+                  <   Is 'lex_mturk.txt'      >
+                  <   present in workspace?   >
+                   \-------------------------/
+                        /             \
+                  (Yes)/               \(No)
+                      v                 v
+             +---------------+   +---------------+
+             | lex_mturk.txt |   |  BenchLS.txt  |
+             |   (Primary)   |   |  (Fallback)   |
+             +---------------+   +---------------+
+                      \                 /
+                       \---------------+
+                               |
+                               v
+             +-----------------------------------+
+             |    LexicalSimplificationDataset   |
+             +-----------------------------------+
+                               |
+                               v
+                     [ Raw Input Sentence ]
+                               |
+                               v
+             +-----------------------------------+
+             |       1. Preprocessing            |
+             |       (POS/Lemma Tagging)         |
+             +-----------------------------------+
+                               |
+                               v
+             +-----------------------------------+
+             |    2. Context-Aware CWI           |
+             |   (Complexity Threshold Gating)   |
+             +-----------------------------------+
+                               |
+                   /-----------------------\
+                  <     Is Word Complex?    >
+                   \-----------------------/
+                        /             \
+                  (Yes)/               \(No)
+                      v                 v
+             +---------------+   +---------------+
+             |  Target Word  |   |   Skip Word   |
+             |   Selected    |   | (Keep As-Is)  |
+             +---------------+   +---------------+
+                      |
+                      v
+             +-----------------------------------+
+             |   3. Word Sense Disambiguation    |
+             |      (WordNet Synset Match)       |
+             +-----------------------------------+
+                               |
+                               v
+             +-----------------------------------+
+             |      4. Candidate Generation      |
+             |   (WordNet / GloVe / BERT MLM)    |
+             +-----------------------------------+
+                               |
+                               v
+             +-----------------------------------+
+             |    5. Contextual Neural Ranker    |
+             |  (Semantic x Simplicity Fusion)   |
+             +-----------------------------------+
+                               |
+                               v
+             +-----------------------------------+
+             |   6. Substitution & Inflection    |
+             |   (Morphology & Offset Shifting)  |
+             +-----------------------------------+
+                               |
+                               v
+                    [ Simplified Sentence ]
