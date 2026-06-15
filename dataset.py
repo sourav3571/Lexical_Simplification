@@ -40,12 +40,12 @@ class LexicalSimplificationDataset(Dataset):
         if os.path.isdir(target_path):
             benchls_path = os.path.join(target_path, "BenchLS.txt")
             lex_mturk_path = os.path.join(target_path, "lex_mturk.txt")
-            if os.path.exists(benchls_path):
-                file_to_parse = benchls_path
-            elif os.path.exists(lex_mturk_path):
+            if os.path.exists(lex_mturk_path):
                 file_to_parse = lex_mturk_path
+            elif os.path.exists(benchls_path):
+                file_to_parse = benchls_path
             else:
-                raise FileNotFoundError(f"Neither BenchLS.txt nor lex_mturk.txt found in {target_path}")
+                raise FileNotFoundError(f"Neither lex_mturk.txt nor BenchLS.txt found in {target_path}")
         else:
             if os.path.exists(target_path):
                 file_to_parse = target_path
@@ -60,8 +60,14 @@ class LexicalSimplificationDataset(Dataset):
         Parses LexMTurk / BenchLS formats into structured candidate/label training samples.
         """
         samples: List[Dict[str, Any]] = []
-        with open(file_path, 'r', encoding='utf-8') as file_obj:
-            for line in file_obj:
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file_obj:
+                lines = file_obj.readlines()
+        except UnicodeDecodeError:
+            with open(file_path, 'r', encoding='latin-1') as file_obj:
+                lines = file_obj.readlines()
+                
+        for line in lines:
                 line = line.strip()
                 if not line:
                     continue
@@ -70,25 +76,70 @@ class LexicalSimplificationDataset(Dataset):
                     continue
                     
                 sentence = parts[0]
+                if sentence.startswith('"') and sentence.endswith('"'):
+                    sentence = sentence[1:-1].strip()
                 target = parts[1]
                 
+                is_benchls = False
                 try:
                     position = int(parts[2])
+                    is_benchls = True
                 except ValueError:
-                    continue
+                    is_benchls = False
                     
-                words = sentence.split(' ')
-                if position >= len(words):
+                parsed_candidates: List[Tuple[str, int]] = []
+                max_votes = 1
+                
+                if is_benchls:
+                    words = sentence.split(' ')
+                    if position >= len(words):
+                        match = re.search(r'\b' + re.escape(target) + r'\b', sentence, re.IGNORECASE)
+                        if not match:
+                            continue
+                        start_char = match.start()
+                        end_char = match.end()
+                    else:
+                        prefix = " ".join(words[:position])
+                        start_char = len(prefix) + 1 if position > 0 else 0
+                        end_char = start_char + len(target)
+                        
+                    candidate_parts = parts[3:]
+                    for item in candidate_parts:
+                        if ':' in item:
+                            parts_item = item.split(':')
+                            if len(parts_item) == 2:
+                                left, right = parts_item
+                                try:
+                                    votes = int(right)
+                                    candidate = left
+                                    parsed_candidates.append((candidate, votes))
+                                    max_votes = max(max_votes, votes)
+                                except ValueError:
+                                    try:
+                                        votes = int(left)
+                                        candidate = right
+                                        parsed_candidates.append((candidate, votes))
+                                        max_votes = max(max_votes, votes)
+                                    except ValueError:
+                                        continue
+                else:
+                    # LexMTurk format: Column 2+ are the raw synonym votes
                     match = re.search(r'\b' + re.escape(target) + r'\b', sentence, re.IGNORECASE)
                     if not match:
-                        continue
+                        match = re.search(re.escape(target), sentence, re.IGNORECASE)
+                        if not match:
+                            continue
                     start_char = match.start()
                     end_char = match.end()
-                else:
-                    prefix = " ".join(words[:position])
-                    start_char = len(prefix) + 1 if position > 0 else 0
-                    end_char = start_char + len(target)
-                
+                    
+                    candidate_parts = [c.strip() for c in parts[2:] if c.strip()]
+                    from collections import Counter
+                    votes_counter = Counter(candidate_parts)
+                    parsed_candidates = list(votes_counter.items())
+                    if not parsed_candidates:
+                        continue
+                    max_votes = max(v for _, v in parsed_candidates)
+                    
                 # Determine POS of target in sentence context
                 target_pos = 'NOUN'
                 try:
@@ -99,31 +150,7 @@ class LexicalSimplificationDataset(Dataset):
                             break
                 except Exception:
                     pass
-                
-                # Extract candidates and votes
-                candidate_parts = parts[3:]
-                parsed_candidates: List[Tuple[str, int]] = []
-                max_votes = 1
-                
-                for item in candidate_parts:
-                    if ':' in item:
-                        parts_item = item.split(':')
-                        if len(parts_item) == 2:
-                            left, right = parts_item
-                            try:
-                                votes = int(right)
-                                candidate = left
-                                parsed_candidates.append((candidate, votes))
-                                max_votes = max(max_votes, votes)
-                            except ValueError:
-                                try:
-                                    votes = int(left)
-                                    candidate = right
-                                    parsed_candidates.append((candidate, votes))
-                                    max_votes = max(max_votes, votes)
-                                except ValueError:
-                                    continue
-                                    
+                    
                 if not parsed_candidates:
                     continue
                     

@@ -5,7 +5,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, random_split
-from transformers import BertTokenizer, AdamW, get_linear_schedule_with_warmup
+from transformers import BertTokenizer, get_linear_schedule_with_warmup
+from torch.optim import AdamW
 import matplotlib.pyplot as plt
 from typing import Dict, Any, List
 
@@ -103,7 +104,7 @@ def run_training() -> None:
     
     # Preprocessor and CWI engines
     preprocessor = Preprocessor()
-    cwi_engine = ComplexWordIdentifier(CONFIG, tokenizer, model.bert, device)
+    cwi_engine = ComplexWordIdentifier(CONFIG, tokenizer, model, device)
     
     # 2. Load and parse dataset
     data_dir = "." # Current directory
