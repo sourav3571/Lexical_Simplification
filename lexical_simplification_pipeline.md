@@ -78,3 +78,16 @@ These two scores are multiplied (`Score = Semantic_Fit * Simplicity_Fit`). This 
 ### 4. Deterministic and Robust Fallback
 *   If the Complex Word Identification (CWI) step finds no words exceeding the default threshold, the system automatically falls back to finding the word with the lowest Zipf frequency. This guarantees that any input sentence is analyzed and simplified.
 *   If candidate generation for a complex word fails, the pipeline handles the exception cleanly without crashing, making it highly suitable for production APIs or user interfaces.
+
+---
+
+## 3. Stage-by-Stage Sequencing & Design Justification
+
+The ordering of our 6-stage pipeline is engineered to optimize computational efficiency and linguistic precision:
+
+1. **Stage 1 (Preprocessing) is first**: Resolving Part-of-Speech (POS) tags and lemmas immediately allows us to discard non-content words (e.g. prepositions, pronouns, determiners, punctuation). This prevents wasting CPU/GPU cycles running deep learning models on structural tokens that cannot be simplified.
+2. **Stage 2 (Context-Aware CWI) is second**: Usually, only $10\% - 20\%$ of the content words in a sentence are complex. By running CWI early, we filter out already-simple words, ensuring WSD and Candidate Generation are only run on the target complex words.
+3. **Stage 3 (Word Sense Disambiguation) is third**: Selecting the precise WordNet sense of the target word before candidate generation acts as a precision gate. For example, if *"bank"* means a financial institution, we ensure we only fetch synonyms for that sense, completely avoiding river-bank synonyms.
+4. **Stage 4 (Candidate Generation & Filtering) is fourth**: Gathering synonyms (WordNet + GloVe) and filtering them (retaining only words that are strictly simpler and share the target POS) narrows the candidate pool down to a small, high-quality set.
+5. **Stage 5 (Contextual Neural Ranking) is fifth**: The neural ranker acts as an evaluator, scoring the filtered candidate list using BERT context, MLM grammar predictions, semantic distance, and simplicity deltas.
+6. **Stage 6 (Substitution & Inflection) is last**: Inflecting the winning candidate (matching singular/plural, verb tense, and case) is done at the very end to ensure the substituted word fits perfectly into the final sentence without causing syntactic or grammatical errors.
