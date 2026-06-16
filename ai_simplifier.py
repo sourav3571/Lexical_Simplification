@@ -427,6 +427,9 @@ class AILexicalSimplifier:
             elif orig_zipf < 4.0:
                 dynamic_freq_gain = 0.20
                 dynamic_cand_freq = max(3.8, orig_zipf + 0.25)
+            elif orig_zipf >= 4.5:
+                dynamic_freq_gain = -0.60
+                dynamic_cand_freq = 4.0
             else:
                 dynamic_freq_gain = FREQ_GAIN_MIN
                 dynamic_cand_freq = CAND_FREQ_MIN
@@ -464,9 +467,9 @@ class AILexicalSimplifier:
                 }
                 wn_pos = pos_map.get(pos.upper()) if pos else None
                 sense_related = True
-                if chosen_sense and sense_conf >= 0.40:
+                if chosen_sense and sense_conf >= 0.55:
                     sense_related = are_semantically_related(chosen_sense, word, cand, pos)
-                elif wn_pos and chosen_sense is None:
+                elif wn_pos:
                     sense_related = are_semantically_related(None, word, cand, pos)
 
                 cand_sentence = sentence[:start_char] + cand + sentence[end_char:]

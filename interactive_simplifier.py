@@ -79,7 +79,7 @@ def _simplify_compact(self, sentence: str) -> str:
         end_char   = cw['end_char']
         orig_zipf  = wf.zipf_frequency(word.lower(), 'en')
 
-        print(f"\n  {BOLD}→ '{word}'{RESET}  zipf={orig_zipf:.2f}")
+        print(f"\n  {BOLD}-> '{word}'{RESET}  zipf={orig_zipf:.2f}")
 
         # Stage 3: Sense disambiguation
         chosen_sense, sense_conf = self.disambiguator.disambiguate(
@@ -112,6 +112,9 @@ def _simplify_compact(self, sentence: str) -> str:
         elif orig_zipf < 4.0:
             dynamic_freq_gain = 0.20
             dynamic_cand_freq = max(3.8, orig_zipf + 0.25)
+        elif orig_zipf >= 4.5:
+            dynamic_freq_gain = -0.60
+            dynamic_cand_freq = 4.0
         else:
             dynamic_freq_gain = FREQ_GAIN_MIN
             dynamic_cand_freq = CAND_FREQ_MIN
@@ -132,9 +135,9 @@ def _simplify_compact(self, sentence: str) -> str:
             freq_gain = cand_freq - orig_zipf
 
             sense_related = True
-            if chosen_sense and sense_conf >= 0.40:
+            if chosen_sense and sense_conf >= 0.55:
                 sense_related = are_semantically_related(chosen_sense, word, cand, pos)
-            elif wn_pos and chosen_sense is None:
+            elif wn_pos:
                 sense_related = are_semantically_related(None, word, cand, pos)
 
             cand_sentence    = sentence[:start_char] + cand + sentence[end_char:]
@@ -184,7 +187,7 @@ def _simplify_compact(self, sentence: str) -> str:
             f"{'mlm_prob':>9} {'sem_sim':>8} {'morph':>6}"
         )
         print(dim(header))
-        print(dim("    " + "─" * 62))
+        print(dim("    " + "-" * 62))
 
         for fc in sorted(filtered_cands, key=lambda x: x['cand_freq'], reverse=True):
             line = (
@@ -272,7 +275,7 @@ def _simplify_compact(self, sentence: str) -> str:
             f"{'mlm_prob':>9} {'morph':>6} {'rank_score':>11}"
         )
         print(dim(rank_hdr))
-        print(dim("    " + "─" * 68))
+        print(dim("    " + "-" * 68))
         for i, sc in enumerate(scored_candidates):
             tag   = ok("  <-- WINNER") if i == 0 else ""
             print(
@@ -289,13 +292,13 @@ def _simplify_compact(self, sentence: str) -> str:
 
         # Confidence gate
         if best_score < BEST_SCORE_MIN:
-            print(warn(f"\n    Confidence gate FAIL: score {best_score:.4f} < {BEST_SCORE_MIN} – keeping '{word}'"))
+            print(warn(f"\n    Confidence gate FAIL: score {best_score:.4f} < {BEST_SCORE_MIN} - keeping '{word}'"))
             continue
         if margin < MARGIN_MIN:
-            print(warn(f"\n    Confidence gate FAIL: margin {margin:.4f} < {MARGIN_MIN} – keeping '{word}'"))
+            print(warn(f"\n    Confidence gate FAIL: margin {margin:.4f} < {MARGIN_MIN} - keeping '{word}'"))
             continue
         if best['mlm_prob'] < MLM_PROB_MIN:
-            print(warn(f"\n    Confidence gate FAIL: mlm {best['mlm_prob']:.4f} < {MLM_PROB_MIN} – keeping '{word}'"))
+            print(warn(f"\n    Confidence gate FAIL: mlm {best['mlm_prob']:.4f} < {MLM_PROB_MIN} - keeping '{word}'"))
             continue
 
         # ── Stage 6: Validation ──────────────────────────────────────────────
@@ -322,9 +325,9 @@ def _simplify_compact(self, sentence: str) -> str:
                 chosen_replacement
             )
             replacements[word] = inflected
-            print(ok(f"\n    ✓ ACCEPTED: '{word}'  →  '{inflected}'"))
+            print(ok(f"\n    [PASS] ACCEPTED: '{word}' -> '{inflected}'"))
         else:
-            print(warn(f"\n    ✗ REJECTED: no candidate passed validation – keeping '{word}'."))
+            print(warn(f"\n    [FAIL] REJECTED: no candidate passed validation - keeping '{word}'."))
 
     # ── Apply replacements ───────────────────────────────────────────────────
     final_sentence = self.replacer.replace_all(sentence, replacements)

@@ -56,26 +56,27 @@ def are_semantically_related(
     c_set = set(c_s)
 
     if chosen_sense:
-        if {chosen_sense}.intersection(c_set):
+        if chosen_sense in c_set:
             return True
-        for rel in chosen_sense.hypernyms() + chosen_sense.hyponyms():
-            if set(rel.hyponyms()).intersection(c_set):
-                return True
-            if set(rel.hypernyms()).intersection(c_set):
+        direct_relations = chosen_sense.hypernyms() + chosen_sense.hyponyms()
+        if any(rel in c_set for rel in direct_relations):
+            return True
+        for hyp in chosen_sense.hypernyms():
+            if any(sister in c_set for sister in hyp.hyponyms()):
                 return True
         return False
 
     t_s = wn.synsets(target_word.lower(), pos=wn_pos)
     if not t_s:
         return False
-    t_set = set(t_s)
-    if t_set.intersection(c_set):
-        return True
     for ts in t_s:
-        for rel in ts.hypernyms() + ts.hyponyms():
-            if set(rel.hyponyms()).intersection(c_set):
-                return True
-            if set(rel.hypernyms()).intersection(c_set):
+        if ts in c_set:
+            return True
+        direct_relations = ts.hypernyms() + ts.hyponyms()
+        if any(rel in c_set for rel in direct_relations):
+            return True
+        for hyp in ts.hypernyms():
+            if any(sister in c_set for sister in hyp.hyponyms()):
                 return True
     return False
 
@@ -437,7 +438,7 @@ class BERTCandidateGenerator:
             target_zipf=wordfreq.zipf_frequency(word_l, 'en'))
 
         # P5: BERT MLM
-        mlm_c, all_probs = self._mlm_candidates(sentence, start_char, end_char)
+        mlm_c, all_probs = self._mlm_candidates(sentence, start_char, end_char, topn=50)
 
         # Discard original word from all sources
         for s in (wn_c, emb_c, mlm_c):

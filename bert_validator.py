@@ -270,21 +270,29 @@ class BERTValidator:
             start_char + len(candidate_word), pos_tag)
         complexity_reduction = orig_complexity - cand_complexity
 
-        if complexity_reduction <= 0.0:
+        orig_zipf = wordfreq.zipf_frequency(original_word.lower(), 'en')
+        cand_zipf = wordfreq.zipf_frequency(candidate_word.lower(), 'en')
+
+        # For high-frequency target words (likely figurative/polysemous), relax validation limits
+        if orig_zipf >= 4.5:
+            min_comp_red = -0.15
+            min_cand_zipf = 4.0
+        else:
+            min_comp_red = 0.0
+            min_cand_zipf = orig_zipf + 0.0001
+
+        if complexity_reduction < min_comp_red:
             if debug:
                 print(f"  [FAIL] Gate 4a: complexity_reduction={complexity_reduction:.4f} "
-                      f"<= 0 (orig={orig_complexity:.4f}, cand={cand_complexity:.4f})")
+                      f"< {min_comp_red} (orig={orig_complexity:.4f}, cand={cand_complexity:.4f})")
             return False
 
-        # NEW: Zipf confirmation — candidate must be genuinely simpler (higher freq)
+        # NEW: Zipf confirmation — candidate must be genuinely simpler (higher freq or relaxed floor)
         if self.GATE4_ZIPF_CONFIRM:
-            orig_zipf = wordfreq.zipf_frequency(original_word.lower(), 'en')
-            cand_zipf = wordfreq.zipf_frequency(candidate_word.lower(), 'en')
-            if cand_zipf <= orig_zipf:
+            if cand_zipf < min_cand_zipf:
                 if debug:
                     print(f"  [FAIL] Gate 4b: cand_zipf={cand_zipf:.2f} "
-                          f"<= orig_zipf={orig_zipf:.2f} "
-                          f"(candidate is not simpler by frequency)")
+                          f"< required_min={min_cand_zipf:.2f} (orig_zipf={orig_zipf:.2f})")
                 return False
 
         if debug:
