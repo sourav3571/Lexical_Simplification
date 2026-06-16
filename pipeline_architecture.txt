@@ -20,6 +20,7 @@
                  |              50% Embedding Drift  |
                  |              20% Prediction Spread|
                  |   - Dynamic mean/std gating       |
+                 |   - Rare word bypass overrides    |
                  +-----------------------------------+
                                    |
                        /-----------------------\
@@ -91,53 +92,75 @@
 
 
 ========================================================================
-                     DETAILED STAGE JUSTIFICATION
+                     DATAFLOW AND COMPONENT ROUTING
 ========================================================================
 
-1. PREPROCESSING
-   Uses spaCy to parse POS tags and extract nouns, verbs, adjectives, adverbs, and
-   proper nouns. This ensures grammatical correctness and ignores function words.
+The simplified input sentence goes through the following file-to-file path:
 
-2. CONTEXT-AWARE CWI (COMPLEX WORD IDENTIFICATION)
-   Uses a 100% BERT-driven, POS-independent model:
-   - Inherent Bias (30%): Extracted from MLM output layer biases (correlated with
-     general frequency) with a subword token length penalty.
-   - Embedding Drift (50%): Measures cosine distance between context embedding and
-     a concrete reference template ("I see the [word]."). Distinguishes abstract,
-     figurative senses (high drift, complex) from concrete senses (low drift, simple).
-   - Prediction Spread (20%): Evaluates top-10 prediction entropy at the word mask,
-     capturing lexical and syntactic uncertainty.
-   - Dynamic Threshold: Flags a word as complex if it exceeds (mean + 1.0 * std_dev)
-     or falls in the top 25% of content words in the sentence (minimum baseline: 0.33).
+1. ENTRY POINT:
+   - `interactive_simplifier.py` accepts input from the terminal or CLI prompt.
+   - Passes the string to `ai_simplifier.py` (which acts as the main pipeline orchestrator).
 
-3. WORD SENSE DISAMBIGUATION (WSD)
-   Matches the context embedding of the target word with definition sentence
-   embeddings of all WordNet synsets. The highest cosine similarity determines
-   the exact semantic sense.
+2. STAGE 1: PREPROCESSING
+   - `ai_simplifier.py` -> `preprocessing.py`
+   - Runs the raw sentence through spaCy to lemmatize tokens, extract POS tags, and isolate content words (nouns, verbs, adjectives, adverbs, proper nouns).
+   - Returns: A list of `content_tokens` containing character offsets and POS tags back to `ai_simplifier.py`.
 
-4. CANDIDATE GENERATION & FILTERING
-   Aggregates raw candidates from WordNet synsets, hypernyms, hyponyms, sister terms,
-   and BERT MLM. Filters candidates using:
-   - Inherent Simplicity: Candidate inherent complexity must not exceed target word
-     complexity + 0.15.
-   - Semantic Relation: Candidate must be semantically linked in WordNet synsets.
-   - Grammatical / Contextual Fit: BERT MLM probability at the mask >= 0.0005.
-   - Meaning Preservation: Sentence embedding similarity (orig vs cand) > 0.85.
+3. STAGE 2: COMPLEX WORD IDENTIFICATION (CWI)
+   - `ai_simplifier.py` -> `dynamic_cwi.py`
+   - Uses the fine-tuned DeBERTa CWI Classifier (`cwi_model.py`) loading checkpoint weights from `cwi_bert_figurative_v2.pt`.
+   - Utilizes hyperparameters defined in `cwi_config.py`.
+   - Invokes `bert_complexity.py` to extract features:
+     - Inherent MLM Bias (30%)
+     - Semantic Embedding Drift (50%): Measures deviation from concrete templates via `embedding_store.py` (which caches vector states).
+     - MLM Prediction Spread (20%)
+   - Applies dynamic standard deviation thresholds and POS-aware rarity overrides (bypassing simple thresholds for low-frequency nouns/adjectives/verbs).
+   - Returns: Identified complex target words to `ai_simplifier.py`.
 
-5. CONTEXTUAL NEURAL RANKER
-   Applies a trained PyTorch Gated Fusion network (`best_model.pt`) that scores
-   each candidate based on four neural features: MLM probability, contextual word
-   cosine similarity, surprisal reduction, and sentence fluency change.
+4. STAGE 3: WORD SENSE DISAMBIGUATION (WSD)
+   - `ai_simplifier.py` -> `bert_sense_disambiguator.py`
+   - Performs cosine similarity checks between the contextual target embedding and WordNet gloss embeddings.
+   - Returns: The target synset corresponding to the correct sense to `ai_simplifier.py`.
 
-6. 4-GATE BERT VALIDATION
-   Individually verifies candidates in order of their rank score. A candidate is
-   only accepted if it passes all four gates:
-   - Gate 1 (MLM Pref): Candidate probability is higher than original, or >= 0.001.
-   - Gate 2 (Similarity): Sentence cosine sim > 0.85 AND word-level cosine sim > 0.65.
-   - Gate 3 (Fluency): Fluency score does not drop by more than 0.7 log-loss units.
-   - Gate 4 (Complexity Reduction): Contextual complexity score of the candidate
-     in the new sentence must be lower than that of the original word.
+5. STAGE 4: CANDIDATE GENERATION & INITIAL FILTERING
+   - `ai_simplifier.py` -> `bert_candidate_generator.py`
+   - Queries WordNet relations and BERT MLM predictions.
+   - Performs structural sanity filtering (POS matches, Zipf frequencies via the `wordfreq` package).
+   - Returns: Filtered list of simple substitution candidates to `ai_simplifier.py`.
 
-7. PARALLEL SUBSTITUTION
-   Replaces all accepted words at once using a parallel replacer, adjusting casing
-   (capitalization) dynamically, while avoiding index-shifting cascading bugs.
+6. STAGE 5: CANDIDATE RANKING
+   - `ai_simplifier.py` -> `bert_ranker.py`
+   - Employs a Gated Fusion Neural Ranker (PyTorch model) using serialized weights in `gated_fusion_ranker.pt`.
+   - Scores candidates based on MLM probability, word embedding cosine similarity, surprisal reduction (`bert_surprisal.py`), and sentence fluency changes.
+   - Returns: An ordered list of ranked candidates to `ai_simplifier.py`.
+
+7. STAGE 6: 4-GATE VALIDATION
+   - `ai_simplifier.py` -> `bert_validator.py`
+   - Sequentially validates top candidates against Gate 1 (probability), Gate 2 (word/sentence similarity), Gate 3 (sentence fluency log-likelihood), and Gate 4 (CWI score reduction).
+   - Returns: The single validated word substitution (or None) to `ai_simplifier.py`.
+
+8. STAGE 7: PARALLEL SUBSTITUTION
+   - `ai_simplifier.py` -> `parallel_replacer.py`
+   - Performs concurrent replacements across multiple non-overlapping word offsets and handles title/capitalization casing.
+   - Returns: The final simplified sentence back to `interactive_simplifier.py`.
+
+
+========================================================================
+                          DATASETS USED
+========================================================================
+
+The following corpora were used to calibrate, train, and validate the modules:
+
+1. CWI 2018 Shared Task Dataset
+   - Primary corpus (~27,000 tokens) with annotations representing binary and probabilistic word complexity. Used for baseline training of the DeBERTa model.
+
+2. LexMTurk Dataset
+   - A dataset of 500 English sentences annotated by crowdsourced human workers. Used to extract gold substitution pairs for training and validation.
+
+3. BenchLS Dataset
+   - A standard lexical simplification benchmark of 929 sentences. Used for training features and pipeline-wide verification.
+
+4. Augmented Figurative/Literal CWI Dataset
+   - Custom dataset (`augmented_cwi_data.json`) consisting of 200 samples (100 figurative, 100 literal) using highly polysemous words (e.g., "nature", "spirit", "face", "heart").
+   - Configured with `generate_augmented_data.py`.
+   - Specifically used in `retrain_cwi.py` to teach the DeBERTa model to recognize abstract/figurative senses as complex (e.g., "nature" of a person) while ignoring literal senses (e.g., "nature" outside).
