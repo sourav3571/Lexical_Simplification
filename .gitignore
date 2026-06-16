@@ -11,3 +11,12 @@ test_run.log
 
 # Temp directory
 .sixth/
+
+# Large weights files
+cwi_*.pt
+
+# Scratch directory
+scratch/
+
+# Diagnostic logs
+test_*.log

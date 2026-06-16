@@ -1,5 +1,4 @@
-# test_ai_pipeline.py
-
+import datasets # Import datasets first to prevent DLL conflict crashes on Windows
 import os
 import torch
 from ai_simplifier import AILexicalSimplifier, verify_bert_mlm

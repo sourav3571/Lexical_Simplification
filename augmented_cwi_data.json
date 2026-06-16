@@ -1,0 +1,1402 @@
+[
+  {
+    "sentence": "The nature of the problem is remarkable.",
+    "word": "nature",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the spirit of the matter.",
+    "word": "spirit",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the face of the crisis.",
+    "word": "face",
+    "start_char": 19,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very heart of the resistance.",
+    "word": "heart",
+    "start_char": 20,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the root of the war carefully.",
+    "word": "root",
+    "start_char": 17,
+    "end_char": 21,
+    "label": 1
+  },
+  {
+    "sentence": "The weight of the development is evident.",
+    "word": "weight",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the depth of the negotiation.",
+    "word": "depth",
+    "start_char": 23,
+    "end_char": 28,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the shadow of the conflict.",
+    "word": "shadow",
+    "start_char": 19,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very core of the democracy.",
+    "word": "core",
+    "start_char": 20,
+    "end_char": 24,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the fabric of the injustice carefully.",
+    "word": "fabric",
+    "start_char": 17,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "The force of the darkness is remarkable.",
+    "word": "force",
+    "start_char": 4,
+    "end_char": 9,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the key of the truth.",
+    "word": "key",
+    "start_char": 23,
+    "end_char": 26,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the seed of the organization.",
+    "word": "seed",
+    "start_char": 19,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very color of the relationship.",
+    "word": "color",
+    "start_char": 20,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the light of the society carefully.",
+    "word": "light",
+    "start_char": 17,
+    "end_char": 22,
+    "label": 1
+  },
+  {
+    "sentence": "The bridge of the grief is evident.",
+    "word": "bridge",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the shield of the evil.",
+    "word": "shield",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the anchor of the corruption.",
+    "word": "anchor",
+    "start_char": 19,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very mirror of the justice.",
+    "word": "mirror",
+    "start_char": 20,
+    "end_char": 26,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the path of the discussion carefully.",
+    "word": "path",
+    "start_char": 17,
+    "end_char": 21,
+    "label": 1
+  },
+  {
+    "sentence": "The nature of the problem is remarkable.",
+    "word": "nature",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the spirit of the matter.",
+    "word": "spirit",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the face of the crisis.",
+    "word": "face",
+    "start_char": 19,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very heart of the resistance.",
+    "word": "heart",
+    "start_char": 20,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the root of the war carefully.",
+    "word": "root",
+    "start_char": 17,
+    "end_char": 21,
+    "label": 1
+  },
+  {
+    "sentence": "The weight of the development is evident.",
+    "word": "weight",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the depth of the negotiation.",
+    "word": "depth",
+    "start_char": 23,
+    "end_char": 28,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the shadow of the conflict.",
+    "word": "shadow",
+    "start_char": 19,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very core of the democracy.",
+    "word": "core",
+    "start_char": 20,
+    "end_char": 24,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the fabric of the injustice carefully.",
+    "word": "fabric",
+    "start_char": 17,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "The force of the darkness is remarkable.",
+    "word": "force",
+    "start_char": 4,
+    "end_char": 9,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the key of the truth.",
+    "word": "key",
+    "start_char": 23,
+    "end_char": 26,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the seed of the organization.",
+    "word": "seed",
+    "start_char": 19,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very color of the relationship.",
+    "word": "color",
+    "start_char": 20,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the light of the society carefully.",
+    "word": "light",
+    "start_char": 17,
+    "end_char": 22,
+    "label": 1
+  },
+  {
+    "sentence": "The bridge of the grief is evident.",
+    "word": "bridge",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the shield of the evil.",
+    "word": "shield",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the anchor of the corruption.",
+    "word": "anchor",
+    "start_char": 19,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very mirror of the justice.",
+    "word": "mirror",
+    "start_char": 20,
+    "end_char": 26,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the path of the discussion carefully.",
+    "word": "path",
+    "start_char": 17,
+    "end_char": 21,
+    "label": 1
+  },
+  {
+    "sentence": "The nature of the problem is remarkable.",
+    "word": "nature",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the spirit of the matter.",
+    "word": "spirit",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the face of the crisis.",
+    "word": "face",
+    "start_char": 19,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very heart of the resistance.",
+    "word": "heart",
+    "start_char": 20,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the root of the war carefully.",
+    "word": "root",
+    "start_char": 17,
+    "end_char": 21,
+    "label": 1
+  },
+  {
+    "sentence": "The weight of the development is evident.",
+    "word": "weight",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the depth of the negotiation.",
+    "word": "depth",
+    "start_char": 23,
+    "end_char": 28,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the shadow of the conflict.",
+    "word": "shadow",
+    "start_char": 19,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very core of the democracy.",
+    "word": "core",
+    "start_char": 20,
+    "end_char": 24,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the fabric of the injustice carefully.",
+    "word": "fabric",
+    "start_char": 17,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "The force of the darkness is remarkable.",
+    "word": "force",
+    "start_char": 4,
+    "end_char": 9,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the key of the truth.",
+    "word": "key",
+    "start_char": 23,
+    "end_char": 26,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the seed of the organization.",
+    "word": "seed",
+    "start_char": 19,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very color of the relationship.",
+    "word": "color",
+    "start_char": 20,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the light of the society carefully.",
+    "word": "light",
+    "start_char": 17,
+    "end_char": 22,
+    "label": 1
+  },
+  {
+    "sentence": "The bridge of the grief is evident.",
+    "word": "bridge",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the shield of the evil.",
+    "word": "shield",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the anchor of the corruption.",
+    "word": "anchor",
+    "start_char": 19,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very mirror of the justice.",
+    "word": "mirror",
+    "start_char": 20,
+    "end_char": 26,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the path of the discussion carefully.",
+    "word": "path",
+    "start_char": 17,
+    "end_char": 21,
+    "label": 1
+  },
+  {
+    "sentence": "The nature of the problem is remarkable.",
+    "word": "nature",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the spirit of the matter.",
+    "word": "spirit",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the face of the crisis.",
+    "word": "face",
+    "start_char": 19,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very heart of the resistance.",
+    "word": "heart",
+    "start_char": 20,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the root of the war carefully.",
+    "word": "root",
+    "start_char": 17,
+    "end_char": 21,
+    "label": 1
+  },
+  {
+    "sentence": "The weight of the development is evident.",
+    "word": "weight",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the depth of the negotiation.",
+    "word": "depth",
+    "start_char": 23,
+    "end_char": 28,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the shadow of the conflict.",
+    "word": "shadow",
+    "start_char": 19,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very core of the democracy.",
+    "word": "core",
+    "start_char": 20,
+    "end_char": 24,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the fabric of the injustice carefully.",
+    "word": "fabric",
+    "start_char": 17,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "The force of the darkness is remarkable.",
+    "word": "force",
+    "start_char": 4,
+    "end_char": 9,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the key of the truth.",
+    "word": "key",
+    "start_char": 23,
+    "end_char": 26,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the seed of the organization.",
+    "word": "seed",
+    "start_char": 19,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very color of the relationship.",
+    "word": "color",
+    "start_char": 20,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the light of the society carefully.",
+    "word": "light",
+    "start_char": 17,
+    "end_char": 22,
+    "label": 1
+  },
+  {
+    "sentence": "The bridge of the grief is evident.",
+    "word": "bridge",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the shield of the evil.",
+    "word": "shield",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the anchor of the corruption.",
+    "word": "anchor",
+    "start_char": 19,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very mirror of the justice.",
+    "word": "mirror",
+    "start_char": 20,
+    "end_char": 26,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the path of the discussion carefully.",
+    "word": "path",
+    "start_char": 17,
+    "end_char": 21,
+    "label": 1
+  },
+  {
+    "sentence": "The nature of the problem is remarkable.",
+    "word": "nature",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the spirit of the matter.",
+    "word": "spirit",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the face of the crisis.",
+    "word": "face",
+    "start_char": 19,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very heart of the resistance.",
+    "word": "heart",
+    "start_char": 20,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the root of the war carefully.",
+    "word": "root",
+    "start_char": 17,
+    "end_char": 21,
+    "label": 1
+  },
+  {
+    "sentence": "The weight of the development is evident.",
+    "word": "weight",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the depth of the negotiation.",
+    "word": "depth",
+    "start_char": 23,
+    "end_char": 28,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the shadow of the conflict.",
+    "word": "shadow",
+    "start_char": 19,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very core of the democracy.",
+    "word": "core",
+    "start_char": 20,
+    "end_char": 24,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the fabric of the injustice carefully.",
+    "word": "fabric",
+    "start_char": 17,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "The force of the darkness is remarkable.",
+    "word": "force",
+    "start_char": 4,
+    "end_char": 9,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the key of the truth.",
+    "word": "key",
+    "start_char": 23,
+    "end_char": 26,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the seed of the organization.",
+    "word": "seed",
+    "start_char": 19,
+    "end_char": 23,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very color of the relationship.",
+    "word": "color",
+    "start_char": 20,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the light of the society carefully.",
+    "word": "light",
+    "start_char": 17,
+    "end_char": 22,
+    "label": 1
+  },
+  {
+    "sentence": "The bridge of the grief is evident.",
+    "word": "bridge",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 1
+  },
+  {
+    "sentence": "We must understand the shield of the evil.",
+    "word": "shield",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 1
+  },
+  {
+    "sentence": "He spoke about the anchor of the corruption.",
+    "word": "anchor",
+    "start_char": 19,
+    "end_char": 25,
+    "label": 1
+  },
+  {
+    "sentence": "It lies at the very mirror of the justice.",
+    "word": "mirror",
+    "start_char": 20,
+    "end_char": 26,
+    "label": 1
+  },
+  {
+    "sentence": "She examined the path of the discussion carefully.",
+    "word": "path",
+    "start_char": 17,
+    "end_char": 21,
+    "label": 1
+  },
+  {
+    "sentence": "I can see the physical nature over there.",
+    "word": "nature",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The spirit of the object was quite small.",
+    "word": "spirit",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough face with his hand.",
+    "word": "face",
+    "start_char": 21,
+    "end_char": 25,
+    "label": 0
+  },
+  {
+    "sentence": "Put the heart on the table, please.",
+    "word": "heart",
+    "start_char": 8,
+    "end_char": 13,
+    "label": 0
+  },
+  {
+    "sentence": "The clean root was placed in the room.",
+    "word": "root",
+    "start_char": 10,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical weight over there.",
+    "word": "weight",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The depth of the object was quite cold.",
+    "word": "depth",
+    "start_char": 4,
+    "end_char": 9,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough shadow with his hand.",
+    "word": "shadow",
+    "start_char": 21,
+    "end_char": 27,
+    "label": 0
+  },
+  {
+    "sentence": "Put the core on the table, please.",
+    "word": "core",
+    "start_char": 8,
+    "end_char": 12,
+    "label": 0
+  },
+  {
+    "sentence": "The clean fabric was placed in the room.",
+    "word": "fabric",
+    "start_char": 10,
+    "end_char": 16,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical force over there.",
+    "word": "force",
+    "start_char": 23,
+    "end_char": 28,
+    "label": 0
+  },
+  {
+    "sentence": "The key of the object was quite small.",
+    "word": "key",
+    "start_char": 4,
+    "end_char": 7,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough seed with his hand.",
+    "word": "seed",
+    "start_char": 21,
+    "end_char": 25,
+    "label": 0
+  },
+  {
+    "sentence": "Put the color on the table, please.",
+    "word": "color",
+    "start_char": 8,
+    "end_char": 13,
+    "label": 0
+  },
+  {
+    "sentence": "The clean light was placed in the room.",
+    "word": "light",
+    "start_char": 10,
+    "end_char": 15,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical bridge over there.",
+    "word": "bridge",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The shield of the object was quite cold.",
+    "word": "shield",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough anchor with his hand.",
+    "word": "anchor",
+    "start_char": 21,
+    "end_char": 27,
+    "label": 0
+  },
+  {
+    "sentence": "Put the mirror on the table, please.",
+    "word": "mirror",
+    "start_char": 8,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "The clean path was placed in the room.",
+    "word": "path",
+    "start_char": 10,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical nature over there.",
+    "word": "nature",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The spirit of the object was quite small.",
+    "word": "spirit",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough face with his hand.",
+    "word": "face",
+    "start_char": 21,
+    "end_char": 25,
+    "label": 0
+  },
+  {
+    "sentence": "Put the heart on the table, please.",
+    "word": "heart",
+    "start_char": 8,
+    "end_char": 13,
+    "label": 0
+  },
+  {
+    "sentence": "The clean root was placed in the room.",
+    "word": "root",
+    "start_char": 10,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical weight over there.",
+    "word": "weight",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The depth of the object was quite cold.",
+    "word": "depth",
+    "start_char": 4,
+    "end_char": 9,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough shadow with his hand.",
+    "word": "shadow",
+    "start_char": 21,
+    "end_char": 27,
+    "label": 0
+  },
+  {
+    "sentence": "Put the core on the table, please.",
+    "word": "core",
+    "start_char": 8,
+    "end_char": 12,
+    "label": 0
+  },
+  {
+    "sentence": "The clean fabric was placed in the room.",
+    "word": "fabric",
+    "start_char": 10,
+    "end_char": 16,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical force over there.",
+    "word": "force",
+    "start_char": 23,
+    "end_char": 28,
+    "label": 0
+  },
+  {
+    "sentence": "The key of the object was quite small.",
+    "word": "key",
+    "start_char": 4,
+    "end_char": 7,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough seed with his hand.",
+    "word": "seed",
+    "start_char": 21,
+    "end_char": 25,
+    "label": 0
+  },
+  {
+    "sentence": "Put the color on the table, please.",
+    "word": "color",
+    "start_char": 8,
+    "end_char": 13,
+    "label": 0
+  },
+  {
+    "sentence": "The clean light was placed in the room.",
+    "word": "light",
+    "start_char": 10,
+    "end_char": 15,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical bridge over there.",
+    "word": "bridge",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The shield of the object was quite cold.",
+    "word": "shield",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough anchor with his hand.",
+    "word": "anchor",
+    "start_char": 21,
+    "end_char": 27,
+    "label": 0
+  },
+  {
+    "sentence": "Put the mirror on the table, please.",
+    "word": "mirror",
+    "start_char": 8,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "The clean path was placed in the room.",
+    "word": "path",
+    "start_char": 10,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical nature over there.",
+    "word": "nature",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The spirit of the object was quite small.",
+    "word": "spirit",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough face with his hand.",
+    "word": "face",
+    "start_char": 21,
+    "end_char": 25,
+    "label": 0
+  },
+  {
+    "sentence": "Put the heart on the table, please.",
+    "word": "heart",
+    "start_char": 8,
+    "end_char": 13,
+    "label": 0
+  },
+  {
+    "sentence": "The clean root was placed in the room.",
+    "word": "root",
+    "start_char": 10,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical weight over there.",
+    "word": "weight",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The depth of the object was quite cold.",
+    "word": "depth",
+    "start_char": 4,
+    "end_char": 9,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough shadow with his hand.",
+    "word": "shadow",
+    "start_char": 21,
+    "end_char": 27,
+    "label": 0
+  },
+  {
+    "sentence": "Put the core on the table, please.",
+    "word": "core",
+    "start_char": 8,
+    "end_char": 12,
+    "label": 0
+  },
+  {
+    "sentence": "The clean fabric was placed in the room.",
+    "word": "fabric",
+    "start_char": 10,
+    "end_char": 16,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical force over there.",
+    "word": "force",
+    "start_char": 23,
+    "end_char": 28,
+    "label": 0
+  },
+  {
+    "sentence": "The key of the object was quite small.",
+    "word": "key",
+    "start_char": 4,
+    "end_char": 7,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough seed with his hand.",
+    "word": "seed",
+    "start_char": 21,
+    "end_char": 25,
+    "label": 0
+  },
+  {
+    "sentence": "Put the color on the table, please.",
+    "word": "color",
+    "start_char": 8,
+    "end_char": 13,
+    "label": 0
+  },
+  {
+    "sentence": "The clean light was placed in the room.",
+    "word": "light",
+    "start_char": 10,
+    "end_char": 15,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical bridge over there.",
+    "word": "bridge",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The shield of the object was quite cold.",
+    "word": "shield",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough anchor with his hand.",
+    "word": "anchor",
+    "start_char": 21,
+    "end_char": 27,
+    "label": 0
+  },
+  {
+    "sentence": "Put the mirror on the table, please.",
+    "word": "mirror",
+    "start_char": 8,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "The clean path was placed in the room.",
+    "word": "path",
+    "start_char": 10,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical nature over there.",
+    "word": "nature",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The spirit of the object was quite small.",
+    "word": "spirit",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough face with his hand.",
+    "word": "face",
+    "start_char": 21,
+    "end_char": 25,
+    "label": 0
+  },
+  {
+    "sentence": "Put the heart on the table, please.",
+    "word": "heart",
+    "start_char": 8,
+    "end_char": 13,
+    "label": 0
+  },
+  {
+    "sentence": "The clean root was placed in the room.",
+    "word": "root",
+    "start_char": 10,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical weight over there.",
+    "word": "weight",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The depth of the object was quite cold.",
+    "word": "depth",
+    "start_char": 4,
+    "end_char": 9,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough shadow with his hand.",
+    "word": "shadow",
+    "start_char": 21,
+    "end_char": 27,
+    "label": 0
+  },
+  {
+    "sentence": "Put the core on the table, please.",
+    "word": "core",
+    "start_char": 8,
+    "end_char": 12,
+    "label": 0
+  },
+  {
+    "sentence": "The clean fabric was placed in the room.",
+    "word": "fabric",
+    "start_char": 10,
+    "end_char": 16,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical force over there.",
+    "word": "force",
+    "start_char": 23,
+    "end_char": 28,
+    "label": 0
+  },
+  {
+    "sentence": "The key of the object was quite small.",
+    "word": "key",
+    "start_char": 4,
+    "end_char": 7,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough seed with his hand.",
+    "word": "seed",
+    "start_char": 21,
+    "end_char": 25,
+    "label": 0
+  },
+  {
+    "sentence": "Put the color on the table, please.",
+    "word": "color",
+    "start_char": 8,
+    "end_char": 13,
+    "label": 0
+  },
+  {
+    "sentence": "The clean light was placed in the room.",
+    "word": "light",
+    "start_char": 10,
+    "end_char": 15,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical bridge over there.",
+    "word": "bridge",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The shield of the object was quite cold.",
+    "word": "shield",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough anchor with his hand.",
+    "word": "anchor",
+    "start_char": 21,
+    "end_char": 27,
+    "label": 0
+  },
+  {
+    "sentence": "Put the mirror on the table, please.",
+    "word": "mirror",
+    "start_char": 8,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "The clean path was placed in the room.",
+    "word": "path",
+    "start_char": 10,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical nature over there.",
+    "word": "nature",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The spirit of the object was quite small.",
+    "word": "spirit",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough face with his hand.",
+    "word": "face",
+    "start_char": 21,
+    "end_char": 25,
+    "label": 0
+  },
+  {
+    "sentence": "Put the heart on the table, please.",
+    "word": "heart",
+    "start_char": 8,
+    "end_char": 13,
+    "label": 0
+  },
+  {
+    "sentence": "The clean root was placed in the room.",
+    "word": "root",
+    "start_char": 10,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical weight over there.",
+    "word": "weight",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The depth of the object was quite cold.",
+    "word": "depth",
+    "start_char": 4,
+    "end_char": 9,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough shadow with his hand.",
+    "word": "shadow",
+    "start_char": 21,
+    "end_char": 27,
+    "label": 0
+  },
+  {
+    "sentence": "Put the core on the table, please.",
+    "word": "core",
+    "start_char": 8,
+    "end_char": 12,
+    "label": 0
+  },
+  {
+    "sentence": "The clean fabric was placed in the room.",
+    "word": "fabric",
+    "start_char": 10,
+    "end_char": 16,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical force over there.",
+    "word": "force",
+    "start_char": 23,
+    "end_char": 28,
+    "label": 0
+  },
+  {
+    "sentence": "The key of the object was quite small.",
+    "word": "key",
+    "start_char": 4,
+    "end_char": 7,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough seed with his hand.",
+    "word": "seed",
+    "start_char": 21,
+    "end_char": 25,
+    "label": 0
+  },
+  {
+    "sentence": "Put the color on the table, please.",
+    "word": "color",
+    "start_char": 8,
+    "end_char": 13,
+    "label": 0
+  },
+  {
+    "sentence": "The clean light was placed in the room.",
+    "word": "light",
+    "start_char": 10,
+    "end_char": 15,
+    "label": 0
+  },
+  {
+    "sentence": "I can see the physical bridge over there.",
+    "word": "bridge",
+    "start_char": 23,
+    "end_char": 29,
+    "label": 0
+  },
+  {
+    "sentence": "The shield of the object was quite cold.",
+    "word": "shield",
+    "start_char": 4,
+    "end_char": 10,
+    "label": 0
+  },
+  {
+    "sentence": "He touched the rough anchor with his hand.",
+    "word": "anchor",
+    "start_char": 21,
+    "end_char": 27,
+    "label": 0
+  },
+  {
+    "sentence": "Put the mirror on the table, please.",
+    "word": "mirror",
+    "start_char": 8,
+    "end_char": 14,
+    "label": 0
+  },
+  {
+    "sentence": "The clean path was placed in the room.",
+    "word": "path",
+    "start_char": 10,
+    "end_char": 14,
+    "label": 0
+  }
+]

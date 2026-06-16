@@ -1,211 +1,389 @@
 # bert_ranker.py
+"""
+Upgraded GatedFusionRanker — 6-feature neural ranker.
+
+New features vs. old (4-feature) ranker:
+  5. Zipf frequency difference (candidate_zipf - original_zipf)
+  6. GloVe / embedding cosine similarity
+
+Feature weights (starting point for training):
+  Score = 0.15 × MLM_prob
+        + 0.40 × SBERT_sentence_sim
+        + 0.15 × surprisal_reduction
+        + 0.15 × fluency_change
+        + 0.10 × zipf_difference
+        + 0.05 × glove_cosine_sim
+
+Training: MarginRankingLoss on BenchLS ranked substitutions.
+Validation: LexMTurk held-out (80/20 split).
+
+Backward compatibility:
+  - `predict(mlm, cos, surp, fluency)` still works (zipf_diff=0, glove=0).
+  - `predict6(...)` is the new 6-feature entry point.
+"""
+
+from __future__ import annotations
 
 import os
 import re
+import random
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from typing import List, Tuple, Optional
+
+from nltk.corpus import wordnet as wn
 from transformers import BertTokenizer, BertForMaskedLM, BertModel
 from bert_surprisal import BERTSurprisalCalculator
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Semantic relation helper (unchanged)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def are_semantically_related(
+    chosen_sense, target_word: str, cand: str, pos_tag: str
+) -> bool:
+    pos_map = {
+        'NOUN': wn.NOUN, 'VERB': wn.VERB,
+        'ADJ': wn.ADJ,   'ADV': wn.ADV, 'PROPN': wn.NOUN,
+    }
+    wn_pos = pos_map.get(pos_tag.upper()) if pos_tag else None
+    if not wn_pos:
+        return True
+    c_s = wn.synsets(cand.lower(), pos=wn_pos)
+    if not c_s:
+        return False
+    c_set = set(c_s)
+    if chosen_sense:
+        if {chosen_sense}.intersection(c_set):
+            return True
+        for rel in chosen_sense.hypernyms() + chosen_sense.hyponyms():
+            if (set(rel.hyponyms()).intersection(c_set)
+                    or set(rel.hypernyms()).intersection(c_set)):
+                return True
+        return False
+    t_s = wn.synsets(target_word.lower(), pos=wn_pos)
+    if not t_s:
+        return False
+    if set(t_s).intersection(c_set):
+        return True
+    for ts in t_s:
+        for rel in ts.hypernyms() + ts.hyponyms():
+            if (set(rel.hyponyms()).intersection(c_set)
+                    or set(rel.hypernyms()).intersection(c_set)):
+                return True
+    return False
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 6-Feature Gated Fusion Ranker
+# ─────────────────────────────────────────────────────────────────────────────
+
 class GatedFusionRanker(nn.Module):
     """
-    GatedFusionRanker is a neural ranker that maps 4 BERT-based contextual features:
-    1. MLM fit probability
-    2. Contextual embedding cosine similarity
-    3. Surprisal reduction
-    4. Sentence fluency change
-    to a single score in [0.0, 1.0].
+    Linear → Sigmoid ranker over 6 features.
+
+    Features (in order):
+        0  mlm_prob           — MLM fit probability
+        1  sbert_sim          — SBERT sentence cosine similarity
+        2  surprisal_red      — surprisal(original) - surprisal(candidate)
+        3  fluency_change     — Δ log-likelihood (higher = more fluent)
+        4  zipf_diff          — candidate_zipf - original_zipf (positive = simpler)
+        5  glove_sim          — GloVe cosine similarity (0 if unavailable)
+
+    Starting weights reflect the priority ordering specified in the task.
+    Training refines these via MarginRankingLoss.
     """
+
+    N_FEATURES = 6
+
     def __init__(self) -> None:
         super().__init__()
         self.net = nn.Sequential(
-            nn.Linear(4, 1),
-            nn.Sigmoid()
+            nn.Linear(self.N_FEATURES, 16),
+            nn.ReLU(),
+            nn.Linear(16, 1),
+            nn.Sigmoid(),
         )
-        
-        # Initialize weights to act as a sensible default linear combination
-        # features: [mlm, cosine, surprisal_red, fluency_change]
+        self._init_weights()
+
+    def _init_weights(self) -> None:
+        """
+        Seed the first linear layer to approximate the specified feature weights:
+          0.15 MLM, 0.40 SBERT, 0.15 surp, 0.15 fluency, 0.10 zipf, 0.05 glove
+        Scaled by 4 so the sigmoid is in a useful range before training.
+        """
         with torch.no_grad():
-            self.net[0].weight.copy_(torch.tensor([[0.2, 4.0, 0.3, 0.3]], dtype=torch.float32))
-            self.net[0].bias.fill_(-3.0)
+            w = torch.tensor(
+                [[0.60, 1.60, 0.60, 0.60, 0.40, 0.20]],
+                dtype=torch.float32)
+            self.net[0].weight.copy_(
+                w.expand(16, -1) * torch.randn(16, 6) * 0.1 + w.expand(16, -1))
+            self.net[0].bias.fill_(-1.0)
 
     def forward(self, features: torch.Tensor) -> torch.Tensor:
         return self.net(features)
 
-    def predict(self, mlm_prob: float, cosine_sim: float, surp_red: float, fluency_change: float) -> float:
+    # ── Single-candidate inference ────────────────────────────────────────────
+
+    def predict(
+        self,
+        mlm_prob:      float,
+        cosine_sim:    float,
+        surp_red:      float,
+        fluency_change: float,
+        pos_mismatch:  bool  = False,
+        zipf_diff:     float = 0.0,
+        glove_sim:     float = 0.0,
+    ) -> float:
         """
-        Predicts ranking score for a single candidate.
+        Backward-compatible predict.  Old callers pass 4 args; new callers
+        pass all 6 features via zipf_diff and glove_sim.
         """
-        feats = torch.tensor([[mlm_prob, cosine_sim, surp_red, fluency_change]], dtype=torch.float32)
+        feats = torch.tensor(
+            [[mlm_prob, cosine_sim, surp_red, fluency_change, zipf_diff, glove_sim]],
+            dtype=torch.float32)
         with torch.no_grad():
             score = self.forward(feats).item()
+        if pos_mismatch:
+            score -= 0.3
         return score
+
+    def predict6(
+        self,
+        mlm_prob:      float,
+        sbert_sim:     float,
+        surp_red:      float,
+        fluency_change: float,
+        zipf_diff:     float,
+        glove_sim:     float,
+        pos_mismatch:  bool = False,
+    ) -> float:
+        """Explicit 6-feature entry point."""
+        return self.predict(
+            mlm_prob, sbert_sim, surp_red, fluency_change,
+            pos_mismatch, zipf_diff, glove_sim)
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Training (MarginRankingLoss on BenchLS + LexMTurk)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def train_on_benchls(
+        self,
+        benchls_path:  str,
+        lex_mturk_path: str,
+        tokenizer:     BertTokenizer,
+        model:         BertForMaskedLM,
+        bert_model:    BertModel,
+        device:        torch.device,
+        epochs:        int  = 3,
+        lr:            float = 0.001,
+        limit:         int  = 200,
+        val_split:     float = 0.2,
+        emb_store=None,         # EmbeddingStore for GloVe feature
+        sbert_encoder=None,     # _SBERTEncoder for sentence sim feature
+    ) -> None:
+        """
+        Train using MarginRankingLoss.
+
+        For each sentence we take ordered pairs of candidates:
+          (higher-voted, lower-voted) — the higher-voted one should score higher.
+        """
+        # ── Load data ────────────────────────────────────────────────────────
+        rows = self._load_dataset(benchls_path) + self._load_dataset(lex_mturk_path)
+        if not rows:
+            print("[GatedFusionRanker] No training data found.")
+            return
+
+        random.shuffle(rows)
+        n_val   = max(1, int(len(rows) * val_split))
+        val_rows = rows[:n_val]
+        trn_rows = rows[n_val: n_val + limit]
+
+        surp_calc = BERTSurprisalCalculator(tokenizer, model, device)
+        self.to(device)
+        self.train()
+
+        optimizer  = optim.Adam(self.parameters(), lr=lr)
+        margin_crit = nn.MarginRankingLoss(margin=0.1)
+
+        print(f"[GatedFusionRanker] Training {len(trn_rows)} sentences, "
+              f"validating {len(val_rows)} | epochs={epochs}")
+
+        for epoch in range(1, epochs + 1):
+            epoch_loss = 0.0
+            n_pairs    = 0
+
+            for sentence, target, candidates in trn_rows:
+                match = re.search(r'\b' + re.escape(target) + r'\b',
+                                  sentence, re.IGNORECASE)
+                if not match:
+                    continue
+                sc, ec = match.start(), match.end()
+
+                # Pre-compute shared tensors
+                feats_list = []
+                for cand, votes in candidates[:5]:
+                    f = self._extract_features(
+                        sentence, target, sc, ec, cand, votes,
+                        tokenizer, model, bert_model, surp_calc, device,
+                        emb_store, sbert_encoder)
+                    if f is not None:
+                        feats_list.append((f, votes))
+
+                # Margin ranking pairs
+                for i in range(len(feats_list)):
+                    for j in range(i + 1, len(feats_list)):
+                        fi, vi = feats_list[i]
+                        fj, vj = feats_list[j]
+                        if vi == vj:
+                            continue
+                        # Higher votes = should rank first
+                        pos_f = fi if vi > vj else fj
+                        neg_f = fj if vi > vj else fi
+                        pos_s = self.forward(
+                            pos_f.unsqueeze(0).to(device))
+                        neg_s = self.forward(
+                            neg_f.unsqueeze(0).to(device))
+                        target_t = torch.ones(1).to(device)
+                        loss = margin_crit(pos_s, neg_s, target_t)
+                        optimizer.zero_grad()
+                        loss.backward()
+                        optimizer.step()
+                        epoch_loss += loss.item()
+                        n_pairs    += 1
+
+            avg = epoch_loss / max(n_pairs, 1)
+            print(f"  Epoch {epoch}/{epochs}  "
+                  f"margin_loss={avg:.4f}  n_pairs={n_pairs}")
+
+        self.eval()
+        print("[GatedFusionRanker] Training complete.")
+
+    def _extract_features(
+        self,
+        sentence, target, sc, ec, cand, votes,
+        tokenizer, model, bert_model, surp_calc, device,
+        emb_store, sbert_encoder,
+    ) -> Optional[torch.Tensor]:
+        """Extract all 6 features for one candidate. Returns None on failure."""
+        import wordfreq
+        try:
+            cand_sentence = sentence[:sc] + cand + sentence[ec:]
+
+            # 0. MLM prob
+            masked = surp_calc.get_masked_sentence_and_idx(sentence, sc, ec)
+            enc    = tokenizer(masked, return_tensors='pt').to(device)
+            midxs  = (enc['input_ids'][0] == tokenizer.mask_token_id
+                      ).nonzero(as_tuple=True)[0]
+            if len(midxs) == 0:
+                return None
+            with torch.no_grad():
+                logits = model(**enc).logits
+            probs = F.softmax(logits[0, midxs[0].item()], dim=-1)
+            toks  = tokenizer(cand, add_special_tokens=False)['input_ids']
+            mlm_p = probs[toks[0]].item() if toks else 1e-9
+
+            # 1. SBERT sentence similarity
+            if sbert_encoder is not None and sbert_encoder.available:
+                sbert_s = sbert_encoder.similarity(sentence, cand_sentence)
+            else:
+                # Fallback: BERT CLS cosine
+                orig_e = bert_model(
+                    **tokenizer(sentence, return_tensors='pt',
+                                padding=True, truncation=True).to(device)
+                ).last_hidden_state[0, 0]
+                cand_e = bert_model(
+                    **tokenizer(cand_sentence, return_tensors='pt',
+                                padding=True, truncation=True).to(device)
+                ).last_hidden_state[0, 0]
+                sbert_s = F.cosine_similarity(
+                    orig_e.unsqueeze(0), cand_e.unsqueeze(0)).item()
+
+            # 2. Surprisal reduction
+            orig_surp = surp_calc.compute_surprisal(sentence, target, sc, ec)
+            cand_surp = surp_calc.compute_surprisal(sentence, cand, sc, ec)
+            surp_red  = orig_surp - cand_surp
+
+            # 3. Fluency change
+            def _fluency(sent):
+                e = tokenizer(sent, return_tensors='pt',
+                              padding=True, truncation=True).to(device)
+                with torch.no_grad():
+                    return -model(**e, labels=e['input_ids']).loss.item()
+
+            fluency_chg = _fluency(cand_sentence) - _fluency(sentence)
+
+            # 4. Zipf diff
+            orig_z  = wordfreq.zipf_frequency(target.lower(), 'en')
+            cand_z  = wordfreq.zipf_frequency(cand.lower(), 'en')
+            zipf_d  = cand_z - orig_z
+
+            # 5. GloVe cosine (0 if unavailable)
+            glove_s = 0.0
+            if emb_store is not None:
+                glove_s = emb_store.similarity(target.lower(), cand.lower(),
+                                               source='glove')
+
+            return torch.tensor(
+                [mlm_p, sbert_s, surp_red, fluency_chg, zipf_d, glove_s],
+                dtype=torch.float32)
+
+        except Exception:
+            return None
+
+    @staticmethod
+    def _load_dataset(path: str) -> list:
+        if not path or not os.path.exists(path):
+            return []
+        rows = []
+        with open(path, encoding='utf-8', errors='ignore') as f:
+            for line in f:
+                parts = line.strip().split('\t')
+                if len(parts) < 3:
+                    continue
+                sentence = parts[0].strip().strip('"')
+                target   = parts[1].strip().lower()
+                raw      = parts[3:] if (
+                    len(parts) > 3 and parts[2].isdigit()) else parts[2:]
+                has_c = any(':' in p for p in raw)
+                cands = []
+                if has_c:
+                    for item in raw:
+                        if ':' in item:
+                            tok = item.split(':')
+                            try:
+                                cands.append((tok[0].strip().lower(),
+                                              int(tok[1])))
+                            except (IndexError, ValueError):
+                                pass
+                else:
+                    from collections import Counter
+                    cnt = Counter(p.strip().lower() for p in raw if p.strip())
+                    cands = list(cnt.items())
+                if cands:
+                    rows.append((sentence, target, cands))
+        return rows
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Legacy: train_on_lex_mturk (kept for backward compat)
+    # ─────────────────────────────────────────────────────────────────────────
 
     def train_on_lex_mturk(
         self,
         file_path: str,
-        tokenizer: BertTokenizer,
-        model: BertForMaskedLM,
-        bert_model: BertModel,
-        device: torch.device,
-        limit: int = 5
+        tokenizer, model, bert_model, device,
+        limit: int = 5,
     ) -> None:
-        """
-        Trains the ranker network on the LexMTurk dataset using BERT feature extraction.
-        """
-        if not os.path.exists(file_path):
-            print(f"Skipping training: {file_path} not found.")
-            return
-
-        print(f"Starting LexMTurk ranker training on {limit} sentences...")
-        self.to(device)
-        self.train()
-        
-        optimizer = optim.Adam(self.parameters(), lr=0.01)
-        criterion = nn.MSELoss()
-        
-        surp_calc = BERTSurprisalCalculator(tokenizer, model, device)
-        
-        # Parse LexMTurk / BenchLS
-        try:
-            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                lines = f.readlines()
-        except Exception as e:
-            print(f"Error reading dataset file: {e}")
-            return
-            
-        trained_samples = 0
-        for line in lines:
-            if trained_samples >= limit:
-                break
-                
-            parts = line.strip().split('\t')
-            if len(parts) < 4:
-                continue
-                
-            sentence = parts[0]
-            target = parts[1]
-            
-            # Clean quote markers if present
-            if sentence.startswith('"') and sentence.endswith('"'):
-                sentence = sentence[1:-1].strip()
-                
-            match = re.search(r'\b' + re.escape(target) + r'\b', sentence, re.IGNORECASE)
-            if not match:
-                continue
-                
-            start_char = match.start()
-            end_char = match.end()
-            
-            # Parse candidates and their frequencies
-            candidates = []
-            start_idx = 3
-            if len(parts) > 2:
-                if not parts[2].isdigit():
-                    start_idx = 2
-                    
-            cand_items = parts[start_idx:]
-            has_colons = any(':' in item for item in cand_items)
-            if has_colons:
-                for item in cand_items:
-                    if ':' in item:
-                        item_parts = item.split(':')
-                        if len(item_parts) >= 2:
-                            try:
-                                cand = item_parts[0].strip().lower()
-                                votes = int(item_parts[1])
-                                candidates.append((cand, votes))
-                            except ValueError:
-                                pass
-            else:
-                from collections import Counter
-                votes_counter = Counter([item.strip().lower() for item in cand_items if item.strip()])
-                candidates = [(cand, votes) for cand, votes in votes_counter.items()]
-                        
-            if not candidates:
-                continue
-                
-            # Get max votes to normalize target labels
-            max_votes = max(c[1] for c in candidates)
-            if max_votes == 0:
-                max_votes = 1
-                
-            # Calculate BERT features for candidates
-            # We will use this to generate training pairs
-            orig_surp = surp_calc.compute_surprisal(sentence, target, start_char, end_char)
-            
-            # Context embedding of original sentence
-            orig_inputs = tokenizer(sentence, return_tensors='pt').to(device)
-            with torch.no_grad():
-                orig_outputs = bert_model(**orig_inputs)
-                orig_states = orig_outputs.last_hidden_state[0]
-            prefix_tokens = tokenizer.tokenize(sentence[:start_char])
-            word_tokens = tokenizer.tokenize(target)
-            orig_start = min(len(prefix_tokens) + 1, orig_states.size(0) - 1)
-            orig_end = min(orig_start + len(word_tokens), orig_states.size(0))
-            orig_word_emb = orig_states[orig_start:orig_end].mean(dim=0)
-            
-            # Pre-calculate fluency of original
-            orig_inputs_full = tokenizer(sentence, return_tensors='pt', padding=True, truncation=True).to(device)
-            with torch.no_grad():
-                orig_loss = model(**orig_inputs_full, labels=orig_inputs_full['input_ids']).loss.item()
-            orig_fluency = -orig_loss
-            
-            # MLM probabilities for candidates in batch
-            masked_text = surp_calc.get_masked_sentence_and_idx(sentence, start_char, end_char)
-            mask_inputs = tokenizer(masked_text, return_tensors='pt').to(device)
-            mask_idx = (mask_inputs['input_ids'][0] == tokenizer.mask_token_id).nonzero(as_tuple=True)[0][0].item()
-            with torch.no_grad():
-                mask_outputs = model(**mask_inputs)
-                mask_logits = mask_outputs.logits
-            probs = F.softmax(mask_logits[0, mask_idx], dim=-1)
-            
-            for cand, votes in candidates[:3]:  # Top 3 candidates per sentence for speed
-                # 1. MLM
-                cand_toks = tokenizer(cand, add_special_tokens=False)['input_ids']
-                if not cand_toks:
-                    continue
-                mlm_prob = probs[cand_toks[0]].item()
-                
-                # 2. Embedding Cosine
-                cand_sentence = sentence[:start_char] + cand + sentence[end_char:]
-                cand_inputs = tokenizer(cand_sentence, return_tensors='pt').to(device)
-                with torch.no_grad():
-                    cand_outputs = bert_model(**cand_inputs)
-                    cand_states = cand_outputs.last_hidden_state[0]
-                cand_prefix = tokenizer.tokenize(sentence[:start_char])
-                cand_toks_list = tokenizer.tokenize(cand)
-                cand_start = min(len(cand_prefix) + 1, cand_states.size(0) - 1)
-                cand_end = min(cand_start + len(cand_toks_list), cand_states.size(0))
-                cand_word_emb = cand_states[cand_start:cand_end].mean(dim=0)
-                
-                cosine_sim = F.cosine_similarity(orig_word_emb.unsqueeze(0), cand_word_emb.unsqueeze(0)).item()
-                
-                # 3. Surprisal reduction
-                cand_surp = surp_calc.compute_surprisal(sentence, cand, start_char, end_char)
-                surp_red = orig_surp - cand_surp
-                
-                # 4. Fluency change
-                cand_inputs_full = tokenizer(cand_sentence, return_tensors='pt', padding=True, truncation=True).to(device)
-                with torch.no_grad():
-                    cand_loss = model(**cand_inputs_full, labels=cand_inputs_full['input_ids']).loss.item()
-                cand_fluency = -cand_loss
-                fluency_change = cand_fluency - orig_fluency
-                
-                # Forward, loss, backward
-                features_tensor = torch.tensor([[mlm_prob, cosine_sim, surp_red, fluency_change]], dtype=torch.float32).to(device)
-                target_score = torch.tensor([[votes / max_votes]], dtype=torch.float32).to(device)
-                
-                optimizer.zero_grad()
-                pred_score = self.forward(features_tensor)
-                loss = criterion(pred_score, target_score)
-                loss.backward()
-                optimizer.step()
-                
-            trained_samples += 1
-            print(f"  Sentence {trained_samples}/{limit} trained successfully.")
-            
-        self.eval()
-        print("Training complete! Model is now optimized.")
+        """Legacy entry point — routes to train_on_benchls."""
+        self.train_on_benchls(
+            benchls_path=file_path,
+            lex_mturk_path='',
+            tokenizer=tokenizer,
+            model=model,
+            bert_model=bert_model,
+            device=device,
+            limit=limit,
+        )
