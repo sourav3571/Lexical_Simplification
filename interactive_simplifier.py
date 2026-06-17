@@ -124,6 +124,34 @@ def _simplify_compact(self, sentence: str) -> str:
                 print(ok(f"    [PPDB FALLBACK] Found PPDB fallback for '{word}' -> '{inflected}'"))
                 return True
             
+            # 3. Check WordNet as general fallback
+            from nltk.corpus import wordnet as wn
+            wordnet_syns = []
+            for w_query in [word.lower(), lemma]:
+                for syn in wn.synsets(w_query):
+                    for lm in syn.lemmas():
+                        cand = lm.name().replace('_', ' ').lower()
+                        if cand != word.lower() and cand != lemma and cand.isalpha():
+                            wordnet_syns.append(cand)
+            wordnet_syns = list(set(wordnet_syns))
+            valid_fallback_syns = []
+            for cand in wordnet_syns:
+                cand_zipf = wf.zipf_frequency(cand, 'en')
+                if cand_zipf >= orig_zipf + 0.25:
+                    valid_fallback_syns.append((cand, cand_zipf))
+            if valid_fallback_syns:
+                valid_fallback_syns.sort(key=lambda x: x[1], reverse=True)
+                chosen = valid_fallback_syns[0][0]
+                if word.isupper():
+                    inflected = chosen.upper()
+                elif len(word) > 0 and word[0].isupper():
+                    inflected = chosen.capitalize()
+                else:
+                    inflected = chosen
+                replacements[word] = inflected
+                print(ok(f"    [WORDNET FALLBACK] Found WordNet fallback for '{word}' -> '{inflected}'"))
+                return True
+
             return False
 
         print(f"\n  {BOLD}-> '{word}'{RESET}  zipf={orig_zipf:.2f}")
