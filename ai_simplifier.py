@@ -201,10 +201,18 @@ class AILexicalSimplifier:
         if text in self._definition_emb_cache:
             return self._definition_emb_cache[text]
 
-        inputs = self.tokenizer(text, return_tensors='pt', padding=True, truncation=True).to(self.device)
-        with torch.no_grad():
-            outputs = self.bert_model(**inputs)
-        emb = outputs.last_hidden_state[0, 0]
+        sbert = getattr(self.cand_gen, '_sbert', None)
+        if sbert and sbert.available:
+            import torch
+            with torch.no_grad():
+                emb_np = sbert._model.encode(text, convert_to_numpy=True, normalize_embeddings=True)
+                emb = torch.from_numpy(emb_np).to(self.device)
+        else:
+            inputs = self.tokenizer(text, return_tensors='pt', padding=True, truncation=True).to(self.device)
+            with torch.no_grad():
+                outputs = self.bert_model(**inputs)
+            emb = outputs.last_hidden_state[0, 0]
+            
         self._definition_emb_cache[text] = emb
         return emb
 
@@ -217,6 +225,7 @@ class AILexicalSimplifier:
     ) -> float:
         """
         Compute a sense similarity score by comparing WordNet definition embeddings.
+        Supports VERB/ADJ POS crossover.
         """
         pos_map = {
             'NOUN': wn.NOUN,
@@ -226,10 +235,17 @@ class AILexicalSimplifier:
             'PROPN': wn.NOUN
         }
         wn_pos = pos_map.get(pos.upper()) if pos else None
-        if not wn_pos:
-            return 0.0
 
-        cand_synsets = wn.synsets(candidate_word.lower(), pos=wn_pos)
+        # Resolve candidate synsets, supporting VERB/ADJ crossover
+        cand_synsets = []
+        if wn_pos:
+            cand_synsets.extend(wn.synsets(candidate_word.lower(), pos=wn_pos))
+            if pos.upper() in ('VERB', 'ADJ'):
+                extra_pos = wn.ADJ if pos.upper() == 'VERB' else wn.VERB
+                cand_synsets.extend(wn.synsets(candidate_word.lower(), pos=extra_pos))
+        else:
+            cand_synsets.extend(wn.synsets(candidate_word.lower()))
+
         if not cand_synsets:
             return 0.0
 
@@ -244,7 +260,16 @@ class AILexicalSimplifier:
                 similarities.append(sim)
             return max(similarities) if similarities else 0.0
 
-        target_synsets = wn.synsets(target_word.lower(), pos=wn_pos)
+        # Resolve target synsets, supporting VERB/ADJ crossover
+        target_synsets = []
+        if wn_pos:
+            target_synsets.extend(wn.synsets(target_word.lower(), pos=wn_pos))
+            if pos.upper() in ('VERB', 'ADJ'):
+                extra_pos = wn.ADJ if pos.upper() == 'VERB' else wn.VERB
+                target_synsets.extend(wn.synsets(target_word.lower(), pos=extra_pos))
+        else:
+            target_synsets.extend(wn.synsets(target_word.lower()))
+
         if not target_synsets:
             return 0.0
 
@@ -649,21 +674,39 @@ class AILexicalSimplifier:
                 cand_fluency   = self.validator.compute_sentence_log_likelihood(cand_sentence)
                 fluency_change = cand_fluency - orig_fluency
 
-                with torch.no_grad():
-                    cand_sent_inputs = self.tokenizer(cand_sentence, return_tensors='pt', padding=True, truncation=True).to(self.device)
-                    cand_sent_emb = self.bert_model(**cand_sent_inputs).last_hidden_state[0, 0]
-                sentence_sim = F.cosine_similarity(orig_sent_emb.unsqueeze(0),
-                                                  cand_sent_emb.unsqueeze(0)).item()
+                sbert = getattr(self.cand_gen, '_sbert', None)
+                if sbert and sbert.available:
+                    sentence_sim = sbert.similarity(sentence, cand_sentence)
+                else:
+                    with torch.no_grad():
+                        cand_sent_inputs = self.tokenizer(cand_sentence, return_tensors='pt', padding=True, truncation=True).to(self.device)
+                        cand_sent_emb = self.bert_model(**cand_sent_inputs).last_hidden_state[0, 0]
+                    sentence_sim = F.cosine_similarity(orig_sent_emb.unsqueeze(0),
+                                                      cand_sent_emb.unsqueeze(0)).item()
+
                 sense_sim = self._wordnet_sense_similarity(chosen_sense, word, cand, pos)
                 morph_match = self._morphological_compatibility(
                     sentence, cand_sentence, start_char, end_char, len(cand))
-                rank_score     = self.ranker.predict(
-                    mlm_prob, cosine_sim, surp_red, fluency_change,
-                    pos_mismatch=False   # already filtered in Stage 4; no penalty needed here
+
+                cand_freq = wordfreq.zipf_frequency(cand, 'en')
+                zipf_diff = cand_freq - orig_zipf
+                glove_sim = 0.0
+                if self.emb_store is not None:
+                    glove_sim = self.emb_store.similarity(word.lower(), cand, source='glove')
+
+                # GatedFusionRanker 6-feature prediction
+                rank_score = self.ranker.predict6(
+                    mlm_prob=mlm_prob,
+                    sbert_sim=sentence_sim,
+                    surp_red=surp_red,
+                    fluency_change=fluency_change,
+                    zipf_diff=zipf_diff,
+                    glove_sim=glove_sim,
+                    pos_mismatch=False
                 )
-                rank_score    += 0.50 * sense_sim
-                rank_score    += 0.10 * sentence_sim
-                semantic_priority = sense_sim + 0.50 * mlm_prob + 0.20 * morph_match
+
+                # Balanced semantic priority: neural ranker score + WordNet sense match + morph check
+                semantic_priority = rank_score + 0.40 * sense_sim + 0.20 * morph_match
 
                 scored_candidates.append({
                     'candidate':         cand,

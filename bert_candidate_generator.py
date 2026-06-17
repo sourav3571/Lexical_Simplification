@@ -40,39 +40,72 @@ def are_semantically_related(
 ) -> bool:
     """
     Returns True if `cand` is semantically related to `target_word` in WordNet.
-    Checks: same synset, hypernyms, hyponyms, sister terms.
+    Checks: same synset, hypernyms, hyponyms, sister terms, similar_tos, and also_sees.
+    Supports VERB/ADJ crossover (participle matching).
     """
     pos_map = {
         'NOUN': wn.NOUN, 'VERB': wn.VERB,
         'ADJ': wn.ADJ,   'ADV': wn.ADV, 'PROPN': wn.NOUN,
     }
     wn_pos = pos_map.get(pos_tag.upper()) if pos_tag else None
-    if not wn_pos:
-        return True
 
-    c_s = wn.synsets(cand.lower(), pos=wn_pos)
+    # Resolve candidate synsets, supporting VERB/ADJ crossover
+    c_s = []
+    if wn_pos:
+        c_s.extend(wn.synsets(cand.lower(), pos=wn_pos))
+        if pos_tag.upper() in ('VERB', 'ADJ'):
+            extra_pos = wn.ADJ if pos_tag.upper() == 'VERB' else wn.VERB
+            c_s.extend(wn.synsets(cand.lower(), pos=extra_pos))
+    else:
+        c_s.extend(wn.synsets(cand.lower()))
+
     if not c_s:
         return False
     c_set = set(c_s)
 
+    def _get_related_synsets(synset):
+        if not synset:
+            return set()
+        rels = set()
+        # Direct relations (hypernyms, hyponyms)
+        rels.update(synset.hypernyms())
+        rels.update(synset.hyponyms())
+        # Similar / also_see for adjectives
+        if hasattr(synset, 'similar_tos'):
+            rels.update(synset.similar_tos())
+        if hasattr(synset, 'also_sees'):
+            rels.update(synset.also_sees())
+        return rels
+
     if chosen_sense:
         if chosen_sense in c_set:
             return True
-        direct_relations = chosen_sense.hypernyms() + chosen_sense.hyponyms()
+        direct_relations = _get_related_synsets(chosen_sense)
         if any(rel in c_set for rel in direct_relations):
             return True
+        # Sister terms
         for hyp in chosen_sense.hypernyms():
             if any(sister in c_set for sister in hyp.hyponyms()):
                 return True
         return False
 
-    t_s = wn.synsets(target_word.lower(), pos=wn_pos)
+    # Resolve target synsets, supporting VERB/ADJ crossover
+    t_s = []
+    if wn_pos:
+        t_s.extend(wn.synsets(target_word.lower(), pos=wn_pos))
+        if pos_tag.upper() in ('VERB', 'ADJ'):
+            extra_pos = wn.ADJ if pos_tag.upper() == 'VERB' else wn.VERB
+            t_s.extend(wn.synsets(target_word.lower(), pos=extra_pos))
+    else:
+        t_s.extend(wn.synsets(target_word.lower()))
+
     if not t_s:
         return False
+
     for ts in t_s:
         if ts in c_set:
             return True
-        direct_relations = ts.hypernyms() + ts.hyponyms()
+        direct_relations = _get_related_synsets(ts)
         if any(rel in c_set for rel in direct_relations):
             return True
         for hyp in ts.hypernyms():
@@ -232,14 +265,31 @@ class BERTCandidateGenerator:
         def _add(syn):
             if syn is None:
                 return
-            # Same synset only (strict)
             for lm in syn.lemmas():
                 name = lm.name().replace('_', ' ').replace('-', ' ').lower()
                 if name.isalpha() and ' ' not in name:
                     cands.add(name)
 
+        def _add_with_relations(syn):
+            if syn is None:
+                return
+            _add(syn)
+            # Add closely related synsets
+            if syn.pos() in ('a', 's'):
+                if hasattr(syn, 'similar_tos'):
+                    for sim in syn.similar_tos():
+                        _add(sim)
+                if hasattr(syn, 'also_sees'):
+                    for see in syn.also_sees():
+                        _add(see)
+            else:
+                for hyper in syn.hypernyms():
+                    _add(hyper)
+                for hypo in syn.hyponyms():
+                    _add(hypo)
+
         if chosen_sense:
-            _add(chosen_sense)
+            _add_with_relations(chosen_sense)
         else:
             synsets_to_check = []
             if wn_pos:
@@ -256,7 +306,7 @@ class BERTCandidateGenerator:
                 synsets_to_check.extend(wn.synsets(word.lower(), pos=extra_pos))
 
             for syn in synsets_to_check:
-                _add(syn)
+                _add_with_relations(syn)
 
         cands.discard(word.lower())
         cands.discard(lemma)
