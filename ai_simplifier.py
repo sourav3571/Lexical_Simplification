@@ -116,6 +116,20 @@ class AILexicalSimplifier:
         except Exception as e:
             print(f"[AILexicalSimplifier] Gold table unavailable: {e}")
 
+        # ── Optional: PPDB lookup table ─────────────────────────────────────
+        self.ppdb_table: dict = {}
+        try:
+            import json
+            ppdb_path = config.get('ppdb_path', 'ppdb_fallback.json')
+            if os.path.exists(ppdb_path):
+                with open(ppdb_path, encoding='utf-8') as f:
+                    self.ppdb_table = json.load(f)
+                print(f"[AILexicalSimplifier] PPDB table loaded: {len(self.ppdb_table)} words.")
+            else:
+                print(f"[AILexicalSimplifier] WARNING: PPDB table not found at {ppdb_path}")
+        except Exception as e:
+            print(f"[AILexicalSimplifier] PPDB table unavailable: {e}")
+
         # ── Optional: EmbeddingStore (GloVe + FastText) ───────────────────────
         self.emb_store = None
         try:
@@ -256,17 +270,20 @@ class AILexicalSimplifier:
         cand_token = self._find_token_at_span(cand_doc, start_char, start_char + cand_len)
         if orig_token is None or cand_token is None:
             return 1.0
-        if orig_token.pos_ != cand_token.pos_:
+        p1, p2 = orig_token.pos_, cand_token.pos_
+        compatible = (p1 == p2) or ({p1, p2} == {'VERB', 'ADJ'}) or ({p1, p2} == {'NOUN', 'PROPN'})
+        if not compatible:
             return 0.0
         orig_morph = orig_token.morph.to_dict()
         cand_morph = cand_token.morph.to_dict()
-        relevant_keys = [k for k in orig_morph.keys() if k in {
+        relevant_keys = [k for k in orig_morph.keys() if k in cand_morph and k in {
             'Number', 'Tense', 'VerbForm', 'Degree', 'Person', 'Mood', 'Aspect', 'Case', 'Gender'
         }]
         if not relevant_keys:
             return 1.0
         matches = sum(1 for key in relevant_keys if orig_morph.get(key) == cand_morph.get(key))
         return matches / len(relevant_keys)
+
 
     # --------------------------------------------------------------- simplify
     def simplify(self, sentence: str, verbose: bool = True) -> str:
@@ -371,6 +388,50 @@ class AILexicalSimplifier:
             start_char = cw['start_char']
             end_char   = cw['end_char']
             orig_zipf  = wordfreq.zipf_frequency(word.lower(), 'en')
+
+            def try_gold_fallback():
+                lemma = word.lower()
+                for token in doc:
+                    if token.idx == start_char:
+                        lemma = token.lemma_.lower()
+                        break
+                # 1. Check BenchLS/LexMTurk
+                gold_candidates = self.gold_table.get(word.lower(), [])
+                if lemma != word.lower() and lemma not in gold_candidates:
+                    gold_candidates = gold_candidates + self.gold_table.get(lemma, [])
+                gold_candidates = [gc for gc in gold_candidates if gc.lower() != word.lower() and gc.lower() != lemma]
+                if gold_candidates:
+                    chosen = gold_candidates[0]
+                    if word.isupper():
+                        inflected = chosen.upper()
+                    elif len(word) > 0 and word[0].isupper():
+                        inflected = chosen.capitalize()
+                    else:
+                        inflected = chosen
+                    replacements[word] = inflected
+                    if verbose:
+                        print(f"  [GOLD FALLBACK] Found LexMTurk/BenchLS fallback for '{word}' -> '{inflected}'")
+                    return True
+                
+                # 2. Check PPDB
+                ppdb_candidates = self.ppdb_table.get(word.lower(), [])
+                if lemma != word.lower() and lemma not in ppdb_candidates:
+                    ppdb_candidates = ppdb_candidates + self.ppdb_table.get(lemma, [])
+                ppdb_candidates = [pc for pc in ppdb_candidates if pc.lower() != word.lower() and pc.lower() != lemma]
+                if ppdb_candidates:
+                    chosen = ppdb_candidates[0]
+                    if word.isupper():
+                        inflected = chosen.upper()
+                    elif len(word) > 0 and word[0].isupper():
+                        inflected = chosen.capitalize()
+                    else:
+                        inflected = chosen
+                    replacements[word] = inflected
+                    if verbose:
+                        print(f"  [PPDB FALLBACK] Found PPDB fallback for '{word}' -> '{inflected}'")
+                    return True
+                
+                return False
 
             if verbose:
                 print(f"\n{'='*60}")
@@ -484,7 +545,9 @@ class AILexicalSimplifier:
                     sense_related = True
 
                 passes_freq  = (freq_gain >= dynamic_freq_gain) and (cand_freq >= dynamic_cand_freq)
-                passes_mlm   = mlm_prob   >= MLM_PROB_MIN
+                is_strong_synonym = sense_related and (semantic_sim >= 0.90)
+                required_mlm = 0.0002 if is_strong_synonym else MLM_PROB_MIN
+                passes_mlm   = mlm_prob   >= required_mlm
                 passes_sem   = semantic_sim >= SEM_SIM_MIN        # raised: 0.82 → 0.90
                 passes_morph = morph_score  >= 0.60
                 passes_sense = sense_related
@@ -496,7 +559,8 @@ class AILexicalSimplifier:
                 orig_doc_s = self.nlp(sentence)
                 orig_token = self._find_token_at_span(orig_doc_s, start_char, end_char)
                 if orig_token is not None and cand_token is not None:
-                    passes_pos = (orig_token.pos_ == cand_token.pos_)
+                    p1, p2 = orig_token.pos_, cand_token.pos_
+                    passes_pos = (p1 == p2) or ({p1, p2} == {'VERB', 'ADJ'}) or ({p1, p2} == {'NOUN', 'PROPN'})
                 else:
                     passes_pos = True  # can't determine → allow through
 
@@ -534,6 +598,7 @@ class AILexicalSimplifier:
             if not filtered_cands:
                 if verbose:
                     print("  => No candidates passed filters. Keeping original word.")
+                try_gold_fallback()
                 continue
 
             # ============================================================
@@ -632,18 +697,21 @@ class AILexicalSimplifier:
             best_score = best['semantic_priority']
             best_freq_gain = wordfreq.zipf_frequency(best['candidate'], 'en') - orig_zipf
 
+            is_strong_syn = (best['sense_sim'] > 0.0) and (best['sentence_sim'] >= 0.90)
+            required_mlm = 0.0002 if is_strong_syn else MLM_PROB_MIN
+
             if verbose:
                 print(f"\nSTAGE 5 - Confidence checks  (winner = '{best['candidate']}'):")
                 ok_score = best_score >= BEST_SCORE_MIN
                 ok_marg  = margin     >= MARGIN_MIN
-                ok_mlm   = best['mlm_prob'] >= MLM_PROB_MIN
+                ok_mlm   = best['mlm_prob'] >= required_mlm
                 ok_gain  = best_freq_gain  >= FREQ_GAIN_MIN
                 print(f"  best_score  : {best_score:.4f}  "
                       f"(need >= {BEST_SCORE_MIN})  {'PASS' if ok_score else 'FAIL'}")
                 print(f"  margin      : {margin:.4f}  "
                       f"(need >= {MARGIN_MIN})   {'PASS' if ok_marg else 'FAIL'}")
                 print(f"  mlm_prob    : {best['mlm_prob']:.4f}  "
-                      f"(need >= {MLM_PROB_MIN})  {'PASS' if ok_mlm else 'FAIL'}")
+                      f"(need >= {required_mlm})  {'PASS' if ok_mlm else 'FAIL'}")
                 print(f"  freq_gain   : {best_freq_gain:.4f}  "
                       f"(need >= {FREQ_GAIN_MIN})    {'PASS' if ok_gain else 'FAIL'}")
 
@@ -652,17 +720,21 @@ class AILexicalSimplifier:
                 if verbose:
                     print(f"\nSTAGE 6 - SKIPPED: best score {best_score:.4f} "
                           f"< {BEST_SCORE_MIN}. Keeping '{word}'.")
+                try_gold_fallback()
                 continue
             if margin < MARGIN_MIN:
                 if verbose:
                     print(f"\nSTAGE 6 - SKIPPED: margin {margin:.4f} < {MARGIN_MIN}. "
                           f"Keeping '{word}'.")
+                try_gold_fallback()
                 continue
-            if best['mlm_prob'] < MLM_PROB_MIN:
+            if best['mlm_prob'] < required_mlm:
                 if verbose:
                     print(f"\nSTAGE 6 - SKIPPED: mlm_prob {best['mlm_prob']:.4f} "
-                          f"< {MLM_PROB_MIN}. Keeping '{word}'.")
+                          f"< {required_mlm}. Keeping '{word}'.")
+                try_gold_fallback()
                 continue
+
 
             # ============================================================
             # STAGE 6 - BERT Validator (4-gate check)
@@ -709,6 +781,7 @@ class AILexicalSimplifier:
                 if verbose:
                     print(f"  REJECTED: No candidate passed validation. "
                           f"Keeping '{word}'.")
+                try_gold_fallback()
 
         # ================================================================
         # Apply all replacements simultaneously

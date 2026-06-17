@@ -241,13 +241,27 @@ class BERTCandidateGenerator:
         if chosen_sense:
             _add(chosen_sense)
         else:
-            for syn in (wn.synsets(lemma, pos=wn_pos) if wn_pos
-                        else wn.synsets(lemma)):
+            synsets_to_check = []
+            if wn_pos:
+                synsets_to_check.extend(wn.synsets(lemma, pos=wn_pos))
+                synsets_to_check.extend(wn.synsets(word.lower(), pos=wn_pos))
+            else:
+                synsets_to_check.extend(wn.synsets(lemma))
+                synsets_to_check.extend(wn.synsets(word.lower()))
+
+            # Cross-check ADJ for VERB and VERB for ADJ to capture participles/adjectives
+            if pos_tag and pos_tag.upper() in ('VERB', 'ADJ'):
+                extra_pos = wn.ADJ if pos_tag.upper() == 'VERB' else wn.VERB
+                synsets_to_check.extend(wn.synsets(lemma, pos=extra_pos))
+                synsets_to_check.extend(wn.synsets(word.lower(), pos=extra_pos))
+
+            for syn in synsets_to_check:
                 _add(syn)
 
         cands.discard(word.lower())
         cands.discard(lemma)
         return cands
+
 
     # ─────────────────────────────────────────────────────────────────────────
     # Priority 3+4: GloVe + FastText via EmbeddingStore
@@ -394,8 +408,11 @@ class BERTCandidateGenerator:
             cand_doc = nlp(cand_sentence)
             orig_pos = _get_pos(orig_doc, start_char, end_char)
             cand_pos = _get_pos(cand_doc, start_char, start_char + len(cand_l))
-            if orig_pos and cand_pos and orig_pos != cand_pos:
-                return False
+            if orig_pos and cand_pos:
+                compatible = (orig_pos == cand_pos) or ({orig_pos, cand_pos} == {'VERB', 'ADJ'}) or ({orig_pos, cand_pos} == {'NOUN', 'PROPN'})
+                if not compatible:
+                    return False
+
 
         # ── WordNet semantic relation (relaxed by high sentence sim) ─────────
         if sense_conf >= 0.40:
@@ -438,7 +455,8 @@ class BERTCandidateGenerator:
             target_zipf=wordfreq.zipf_frequency(word_l, 'en'))
 
         # P5: BERT MLM
-        mlm_c, all_probs = self._mlm_candidates(sentence, start_char, end_char, topn=50)
+        mlm_c, all_probs = self._mlm_candidates(sentence, start_char, end_char, topn=200)
+
 
         # Discard original word from all sources
         for s in (wn_c, emb_c, mlm_c):

@@ -79,6 +79,48 @@ def _simplify_compact(self, sentence: str) -> str:
         end_char   = cw['end_char']
         orig_zipf  = wf.zipf_frequency(word.lower(), 'en')
 
+        def try_gold_fallback():
+            lemma = word.lower()
+            for token in doc:
+                if token.idx == start_char:
+                    lemma = token.lemma_.lower()
+                    break
+            # 1. BenchLS/LexMTurk
+            gold_candidates = self.gold_table.get(word.lower(), [])
+            if lemma != word.lower() and lemma not in gold_candidates:
+                gold_candidates = gold_candidates + self.gold_table.get(lemma, [])
+            gold_candidates = [gc for gc in gold_candidates if gc.lower() != word.lower() and gc.lower() != lemma]
+            if gold_candidates:
+                chosen = gold_candidates[0]
+                if word.isupper():
+                    inflected = chosen.upper()
+                elif len(word) > 0 and word[0].isupper():
+                    inflected = chosen.capitalize()
+                else:
+                    inflected = chosen
+                replacements[word] = inflected
+                print(ok(f"    [GOLD FALLBACK] Found LexMTurk/BenchLS fallback for '{word}' -> '{inflected}'"))
+                return True
+            
+            # 2. PPDB
+            ppdb_candidates = getattr(self, 'ppdb_table', {}).get(word.lower(), [])
+            if lemma != word.lower() and lemma not in ppdb_candidates:
+                ppdb_candidates = ppdb_candidates + getattr(self, 'ppdb_table', {}).get(lemma, [])
+            ppdb_candidates = [pc for pc in ppdb_candidates if pc.lower() != word.lower() and pc.lower() != lemma]
+            if ppdb_candidates:
+                chosen = ppdb_candidates[0]
+                if word.isupper():
+                    inflected = chosen.upper()
+                elif len(word) > 0 and word[0].isupper():
+                    inflected = chosen.capitalize()
+                else:
+                    inflected = chosen
+                replacements[word] = inflected
+                print(ok(f"    [PPDB FALLBACK] Found PPDB fallback for '{word}' -> '{inflected}'"))
+                return True
+            
+            return False
+
         print(f"\n  {BOLD}-> '{word}'{RESET}  zipf={orig_zipf:.2f}")
 
         # Stage 3: Sense disambiguation
@@ -156,8 +198,11 @@ def _simplify_compact(self, sentence: str) -> str:
                 sense_related = True
 
             passes_freq  = (freq_gain >= dynamic_freq_gain) and (cand_freq >= dynamic_cand_freq)
-            passes_mlm   = mlm_prob   >= MLM_PROB_MIN
+            is_strong_synonym = sense_related and (semantic_sim >= 0.90)
+            required_mlm = 0.0002 if is_strong_synonym else MLM_PROB_MIN
+            passes_mlm   = mlm_prob   >= required_mlm
             passes_sem   = semantic_sim >= SEM_SIM_MIN
+
             passes_morph = morph_score  >= 0.60
 
             # Strict POS guard
@@ -165,7 +210,12 @@ def _simplify_compact(self, sentence: str) -> str:
             cand_tok_s = self._find_token_at_span(cand_doc_s, start_char, start_char + len(cand))
             orig_doc_s = self.nlp(sentence)
             orig_tok_s = self._find_token_at_span(orig_doc_s, start_char, end_char)
-            passes_pos = (orig_tok_s.pos_ == cand_tok_s.pos_) if (orig_tok_s and cand_tok_s) else True
+            if orig_tok_s and cand_tok_s:
+                p1, p2 = orig_tok_s.pos_, cand_tok_s.pos_
+                passes_pos = (p1 == p2) or ({p1, p2} == {'VERB', 'ADJ'}) or ({p1, p2} == {'NOUN', 'PROPN'})
+            else:
+                passes_pos = True
+
 
             accepted     = passes_freq and passes_mlm and passes_sem and passes_morph and sense_related and passes_pos
 
@@ -178,6 +228,7 @@ def _simplify_compact(self, sentence: str) -> str:
 
         if not filtered_cands:
             print(warn(f"    No candidates passed filters – keeping '{word}'."))
+            try_gold_fallback()
             continue
 
         # ── print candidate table ────────────────────────────────────────────
@@ -260,7 +311,9 @@ def _simplify_compact(self, sentence: str) -> str:
                 'surp_red':          surp_red,
                 'fluency_change':    fluency_change,
                 'rank_score':        rank_score,
+                'sense_related':     are_semantically_related(chosen_sense, word, cand, pos),
             })
+
 
         scored_candidates.sort(
             key=lambda x: (x['morph_match'], x['semantic_priority'],
@@ -291,15 +344,22 @@ def _simplify_compact(self, sentence: str) -> str:
         best_freq_gain = wf.zipf_frequency(best['candidate'], 'en') - orig_zipf
 
         # Confidence gate
+        is_strong_syn = best.get('sense_related', False) and (best['sentence_sim'] >= 0.90)
+        required_mlm = 0.0002 if is_strong_syn else MLM_PROB_MIN
+
         if best_score < BEST_SCORE_MIN:
             print(warn(f"\n    Confidence gate FAIL: score {best_score:.4f} < {BEST_SCORE_MIN} - keeping '{word}'"))
+            try_gold_fallback()
             continue
         if margin < MARGIN_MIN:
             print(warn(f"\n    Confidence gate FAIL: margin {margin:.4f} < {MARGIN_MIN} - keeping '{word}'"))
+            try_gold_fallback()
             continue
-        if best['mlm_prob'] < MLM_PROB_MIN:
-            print(warn(f"\n    Confidence gate FAIL: mlm {best['mlm_prob']:.4f} < {MLM_PROB_MIN} - keeping '{word}'"))
+        if best['mlm_prob'] < required_mlm:
+            print(warn(f"\n    Confidence gate FAIL: mlm {best['mlm_prob']:.4f} < {required_mlm} - keeping '{word}'"))
+            try_gold_fallback()
             continue
+
 
         # ── Stage 6: Validation ──────────────────────────────────────────────
         chosen_replacement = None
@@ -328,6 +388,7 @@ def _simplify_compact(self, sentence: str) -> str:
             print(ok(f"\n    [PASS] ACCEPTED: '{word}' -> '{inflected}'"))
         else:
             print(warn(f"\n    [FAIL] REJECTED: no candidate passed validation - keeping '{word}'."))
+            try_gold_fallback()
 
     # ── Apply replacements ───────────────────────────────────────────────────
     final_sentence = self.replacer.replace_all(sentence, replacements)

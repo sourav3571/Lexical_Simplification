@@ -106,16 +106,19 @@ class BERTValidator:
             cand_doc, start_char, start_char + candidate_length)
         if orig_tok is None or cand_tok is None:
             return True
-        if orig_tok.pos_ != cand_tok.pos_:
+        pos1, pos2 = orig_tok.pos_, cand_tok.pos_
+        compatible = (pos1 == pos2) or ({pos1, pos2} == {'VERB', 'ADJ'}) or ({pos1, pos2} == {'NOUN', 'PROPN'})
+        if not compatible:
             return False
         orig_m = orig_tok.morph.to_dict()
         cand_m = cand_tok.morph.to_dict()
-        keys   = [k for k in orig_m if k in {
+        keys   = [k for k in orig_m if k in cand_m and k in {
             'Number', 'Tense', 'VerbForm', 'Degree',
             'Person', 'Mood', 'Aspect', 'Case', 'Gender'}]
         if not keys:
             return True
         return all(orig_m.get(k) == cand_m.get(k) for k in keys)
+
 
     def get_sentence_embedding(self, sentence: str) -> torch.Tensor:
         enc = self.tokenizer(sentence, return_tensors='pt',
