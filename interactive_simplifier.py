@@ -61,6 +61,11 @@ def _simplify_compact(self, sentence: str) -> str:
     # ── Stage 2: CWI ────────────────────────────────────────────────────────
     cwi_results  = self.cwi.identify_complex_words(
         sentence, content_tokens, cwi_threshold=CWI_THRESHOLD)
+    if len(content_tokens) == 1 and cwi_results:
+        single_word = content_tokens[0][0]
+        if wf.zipf_frequency(single_word.lower(), 'en') < 5.5:
+            cwi_results[0]['is_complex'] = True
+
     complex_words = [r for r in cwi_results if r['is_complex']]
 
     if not complex_words:
