@@ -23,29 +23,76 @@ def dim(text):  return f"{DIM}{text}{RESET}"
 # ── patch AILexicalSimplifier with a compact output mode ────────────────────
 def _simplify_compact(self, sentence: str) -> str:
     """
-    Run the full pipeline but print only the information a user cares about:
-      • Which words were identified as complex
+    Run the full 7-stage pipeline but print only the information a user cares about:
+      • Which idioms and metaphors were identified and simplified
+      • Which words were identified as complex in standard CWI
       • Candidates that passed every filter, with their key scores
       • The winner for each complex word
       • The final simplified sentence
-    Internal debug tables and stage banners are suppressed.
     """
     import torch.nn.functional as F
     import wordfreq as wf
     from nltk.corpus import wordnet as wn
     from bert_ranker import are_semantically_related
 
-    CWI_THRESHOLD  = 0.32          # mean + 1.2*std  (was 0.30)
+    CWI_THRESHOLD  = 0.32          # mean + 1.2*std
     FREQ_GAIN_MIN  = 0.25
     CAND_FREQ_MIN  = 4.0
     MLM_PROB_MIN   = 0.0025
     BEST_SCORE_MIN = 0.40
     MARGIN_MIN     = 0.005
-    SEM_SIM_MIN    = 0.90          # raised from 0.82
+    SEM_SIM_MIN    = 0.90          # meaning preservation
 
     print(f"\n{hdr('INPUT')}  {sentence}")
 
-    # ── Stage 1 ─────────────────────────────────────────────────────────────
+    # ── Layer 0: Idiom Handler ──────────────────────────────────────────────
+    if self.fig_config.get("idiom_first", True):
+        idioms_detected = self.idiom_detector.detect(
+            sentence, 
+            classifier=self.idiom_classifier if self.fig_config.get("use_bert_classifier", True) else None,
+            confidence_threshold=self.fig_config.get("idiom_confidence_threshold", 0.80)
+        )
+        if idioms_detected:
+            print(f"\n{hdr('LAYER 0: IDIOMS DETECTED')}")
+            idioms_detected = sorted(idioms_detected, key=lambda x: x["position"][0], reverse=True)
+            working_sentence = sentence
+            for idiom in idioms_detected:
+                start_char, end_char = idiom["position"]
+                orig_text = working_sentence[start_char:end_char]
+                base_repl = idiom["simple_replacement"]
+                
+                inflected = self.fig_simplifier.inflect_verb(base_repl, orig_text)
+                inflected = self.fig_simplifier.apply_casing(orig_text, inflected)
+                
+                working_sentence = working_sentence[:start_char] + inflected + working_sentence[end_char:]
+                print(ok(f"  Mapped '{orig_text}' -> '{inflected}' (confidence: {idiom['confidence']:.2f})"))
+            sentence = working_sentence
+
+    replacements = {}
+
+    # ── Layer 1: Metaphor & Figurative Adjective Handler ────────────────────
+    if self.fig_config.get("metaphor_second", True):
+        metaphor_results = self.metaphor_detector.detect(sentence)
+        metaphors = [met for met in metaphor_results if met["is_metaphorical"]]
+        if metaphors:
+            print(f"\n{hdr('LAYER 1: METAPHORS/FIGURATIVE DETECTED')}")
+            for met in metaphors:
+                word = met["word"]
+                pos = met["pos"]
+                start_char = met["start_char"]
+                end_char = met["end_char"]
+                
+                if pos == "ADJ":
+                    rep = self.fig_simplifier.find_adjective_synonym(sentence, word, pos, start_char, end_char)
+                else:
+                    rep = self.fig_simplifier.find_metaphor_synonym(sentence, word, pos, start_char, end_char)
+                    
+                if rep != word:
+                    rep = self.fig_simplifier.apply_casing(word, rep)
+                    replacements[word] = rep
+                    print(ok(f"  Mapped metaphorical '{word}' ({pos}) -> concrete '{rep}' (score: {met['combined_score']:.2f})"))
+
+    # ── Stage 1: Preprocessing ──────────────────────────────────────────────
     doc            = self.nlp(sentence)
     content_tokens = []
     for token in doc:
@@ -54,28 +101,36 @@ def _simplify_compact(self, sentence: str) -> str:
             ec = sc + len(token.text)
             content_tokens.append((token.text, token.pos_, sc, ec))
 
-    if not content_tokens:
-        print(warn("  No content words found."))
+    if not content_tokens and not replacements:
+        print(warn("  No complex content words found."))
         return sentence
 
     # ── Stage 2: CWI ────────────────────────────────────────────────────────
-    cwi_results  = self.cwi.identify_complex_words(
-        sentence, content_tokens, cwi_threshold=CWI_THRESHOLD)
-    if len(content_tokens) == 1 and cwi_results:
-        single_word = content_tokens[0][0]
-        if wf.zipf_frequency(single_word.lower(), 'en') < 5.5:
-            cwi_results[0]['is_complex'] = True
+    cwi_results = []
+    if content_tokens:
+        cwi_results = self.cwi.identify_complex_words(
+            sentence, content_tokens, cwi_threshold=CWI_THRESHOLD)
+        if len(content_tokens) == 1 and cwi_results:
+            single_word = content_tokens[0][0]
+            if wf.zipf_frequency(single_word.lower(), 'en') < 5.5:
+                cwi_results[0]['is_complex'] = True
 
-    complex_words = [r for r in cwi_results if r['is_complex']]
+    complex_words = []
+    for r in cwi_results:
+        w = r['word']
+        # Skip if already handled by Layer 1 Metaphors
+        if w in replacements:
+            continue
+        if r['is_complex']:
+            complex_words.append(r)
 
-    if not complex_words:
+    if not complex_words and not replacements:
         print(ok("  No complex words detected – sentence is already simple."))
         return sentence
 
-    print(f"\n{hdr('COMPLEX WORDS')}  "
-          + ", ".join(f"{r['word']} ({r['score']:.3f})" for r in complex_words))
-
-    replacements = {}
+    if complex_words:
+        print(f"\n{hdr('COMPLEX WORDS (STANDARD CWI)')}  "
+              + ", ".join(f"{r['word']} ({r['score']:.3f})" for r in complex_words))
 
     for cw in complex_words:
         word       = cw['word']
@@ -97,14 +152,8 @@ def _simplify_compact(self, sentence: str) -> str:
             gold_candidates = [gc for gc in gold_candidates if gc.lower() != word.lower() and gc.lower() != lemma]
             if gold_candidates:
                 chosen = gold_candidates[0]
-                if word.isupper():
-                    inflected = chosen.upper()
-                elif len(word) > 0 and word[0].isupper():
-                    inflected = chosen.capitalize()
-                else:
-                    inflected = chosen
-                replacements[word] = inflected
-                print(ok(f"    [GOLD FALLBACK] Found LexMTurk/BenchLS fallback for '{word}' -> '{inflected}'"))
+                replacements[word] = self.fig_simplifier.apply_casing(word, chosen)
+                print(ok(f"    [GOLD FALLBACK] Found LexMTurk/BenchLS fallback for '{word}' -> '{replacements[word]}'"))
                 return True
             
             # 2. PPDB
@@ -114,14 +163,8 @@ def _simplify_compact(self, sentence: str) -> str:
             ppdb_candidates = [pc for pc in ppdb_candidates if pc.lower() != word.lower() and pc.lower() != lemma]
             if ppdb_candidates:
                 chosen = ppdb_candidates[0]
-                if word.isupper():
-                    inflected = chosen.upper()
-                elif len(word) > 0 and word[0].isupper():
-                    inflected = chosen.capitalize()
-                else:
-                    inflected = chosen
-                replacements[word] = inflected
-                print(ok(f"    [PPDB FALLBACK] Found PPDB fallback for '{word}' -> '{inflected}'"))
+                replacements[word] = self.fig_simplifier.apply_casing(word, chosen)
+                print(ok(f"    [PPDB FALLBACK] Found PPDB fallback for '{word}' -> '{replacements[word]}'"))
                 return True
             
             # 3. Check WordNet as general fallback
@@ -142,14 +185,8 @@ def _simplify_compact(self, sentence: str) -> str:
             if valid_fallback_syns:
                 valid_fallback_syns.sort(key=lambda x: x[1], reverse=True)
                 chosen = valid_fallback_syns[0][0]
-                if word.isupper():
-                    inflected = chosen.upper()
-                elif len(word) > 0 and word[0].isupper():
-                    inflected = chosen.capitalize()
-                else:
-                    inflected = chosen
-                replacements[word] = inflected
-                print(ok(f"    [WORDNET FALLBACK] Found WordNet fallback for '{word}' -> '{inflected}'"))
+                replacements[word] = self.fig_simplifier.apply_casing(word, chosen)
+                print(ok(f"    [WORDNET FALLBACK] Found WordNet fallback for '{word}' -> '{replacements[word]}'"))
                 return True
 
             return False
@@ -235,7 +272,6 @@ def _simplify_compact(self, sentence: str) -> str:
             required_mlm = 0.0002 if is_strong_synonym else MLM_PROB_MIN
             passes_mlm   = mlm_prob   >= required_mlm
             passes_sem   = semantic_sim >= SEM_SIM_MIN
-
             passes_morph = morph_score  >= 0.60
 
             # Strict POS guard
@@ -249,8 +285,7 @@ def _simplify_compact(self, sentence: str) -> str:
             else:
                 passes_pos = True
 
-
-            accepted     = passes_freq and passes_mlm and passes_sem and passes_morph and sense_related and passes_pos
+            accepted = passes_freq and passes_mlm and passes_sem and passes_morph and sense_related and passes_pos
 
             if accepted:
                 filtered_cands.append({
@@ -328,10 +363,21 @@ def _simplify_compact(self, sentence: str) -> str:
             morph_match = self._morphological_compatibility(
                 sentence, cand_sentence, start_char, end_char, len(cand))
 
-            rank_score  = self.ranker.predict(mlm_prob, cosine_sim, surp_red, fluency_change)
-            rank_score += 0.50 * sense_sim
-            rank_score += 0.10 * sentence_sim
-            semantic_priority = sense_sim + 0.50 * mlm_prob + 0.20 * morph_match
+            # New Gated Ranker sharing feature weights
+            sbert = getattr(self.cand_gen, '_sbert', None)
+            if sbert and sbert.available:
+                s_sim = sbert.similarity(sentence, cand_sentence)
+            else:
+                s_sim = sentence_sim
+            g_sim = 0.0
+            if self.emb_store is not None:
+                g_sim = self.emb_store.similarity(word.lower(), cand, source='glove')
+
+            rank_score = self.ranker.predict6(
+                mlm_prob=mlm_prob, sbert_sim=s_sim, surp_red=surp_red,
+                fluency_change=fluency_change, zipf_diff=fc['freq_gain'], glove_sim=g_sim, pos_mismatch=False
+            )
+            semantic_priority = rank_score + 0.40 * sense_sim + 0.20 * morph_match
 
             scored_candidates.append({
                 'candidate':         cand,
@@ -346,7 +392,6 @@ def _simplify_compact(self, sentence: str) -> str:
                 'rank_score':        rank_score,
                 'sense_related':     are_semantically_related(chosen_sense, word, cand, pos),
             })
-
 
         scored_candidates.sort(
             key=lambda x: (x['morph_match'], x['semantic_priority'],
@@ -393,7 +438,6 @@ def _simplify_compact(self, sentence: str) -> str:
             try_gold_fallback()
             continue
 
-
         # ── Stage 6: Validation ──────────────────────────────────────────────
         chosen_replacement = None
         for sc in scored_candidates:
@@ -405,26 +449,24 @@ def _simplify_compact(self, sentence: str) -> str:
                 start_char=start_char,
                 end_char=end_char,
                 pos_tag=pos,
-                debug=False            # ← suppress validator internals
+                debug=False
             )
             if is_valid:
                 chosen_replacement = candidate
                 break
 
         if chosen_replacement:
-            inflected = (
-                chosen_replacement.upper()       if word.isupper()              else
-                chosen_replacement.capitalize()  if len(word) > 0 and word[0].isupper() else
-                chosen_replacement
-            )
-            replacements[word] = inflected
-            print(ok(f"\n    [PASS] ACCEPTED: '{word}' -> '{inflected}'"))
+            replacements[word] = self.fig_simplifier.apply_casing(word, chosen_replacement)
+            print(ok(f"\n    [PASS] ACCEPTED: '{word}' -> '{replacements[word]}'"))
         else:
             print(warn(f"\n    [FAIL] REJECTED: no candidate passed validation - keeping '{word}'."))
             try_gold_fallback()
 
     # ── Apply replacements ───────────────────────────────────────────────────
     final_sentence = self.replacer.replace_all(sentence, replacements)
+    
+    # Post-processing grammar correction
+    final_sentence = self.fig_simplifier.correct_grammar(final_sentence)
 
     print(f"\n{hdr('INPUT ')}   {sentence}")
     print(f"{hdr('RESULT')}   {ok(final_sentence)}\n")

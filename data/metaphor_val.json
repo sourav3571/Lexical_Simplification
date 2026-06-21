@@ -1,0 +1,132 @@
+[
+  {
+    "sentence": "The face was clean and dry.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature of difficulty is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The pain of the situation was everlasting.",
+    "word": "everlasting",
+    "position": 6,
+    "label": 1,
+    "simpler": "permanent"
+  },
+  {
+    "sentence": "The pain of the situation was overwhelming.",
+    "word": "overwhelming",
+    "position": 6,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The heart was clean and dry.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The root of conflict is very complex.",
+    "word": "root",
+    "position": 1,
+    "label": 1,
+    "simpler": "basis"
+  },
+  {
+    "sentence": "The face was very beautiful.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The heart was clean and dry.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was everlasting.",
+    "word": "everlasting",
+    "position": 6,
+    "label": 1,
+    "simpler": "permanent"
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The face was clean and dry.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The face was clean and dry.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The face of science is very complex.",
+    "word": "face",
+    "position": 1,
+    "label": 1,
+    "simpler": "reality"
+  },
+  {
+    "sentence": "The face was clean and dry.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The face was clean and dry.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature of conflict is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The pain of the situation was everlasting.",
+    "word": "everlasting",
+    "position": 6,
+    "label": 1,
+    "simpler": "permanent"
+  }
+]

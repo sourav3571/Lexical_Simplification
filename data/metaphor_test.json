@@ -1,0 +1,134 @@
+[
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The face of law is very complex.",
+    "word": "face",
+    "position": 1,
+    "label": 1,
+    "simpler": "reality"
+  },
+  {
+    "sentence": "The strength is enduring.",
+    "word": "enduring",
+    "position": 3,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The nature outside is beautiful.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The root of success is hard work.",
+    "word": "root",
+    "position": 1,
+    "label": 1
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The nature of problem is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The shield of the knight is metal.",
+    "word": "shield",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The face of success is very complex.",
+    "word": "face",
+    "position": 1,
+    "label": 1,
+    "simpler": "reality"
+  },
+  {
+    "sentence": "The root was clean and dry.",
+    "word": "root",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The bond is everlasting.",
+    "word": "everlasting",
+    "position": 3,
+    "label": 1,
+    "simpler": "permanent"
+  },
+  {
+    "sentence": "The heart was clean and dry.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "They made a bitter complaint.",
+    "word": "bitter",
+    "position": 3,
+    "label": 1,
+    "simpler": "angry"
+  },
+  {
+    "sentence": "The pain of the situation was overwhelming.",
+    "word": "overwhelming",
+    "position": 6,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The spirit was clean and dry.",
+    "word": "spirit",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The heart of education is very complex.",
+    "word": "heart",
+    "position": 1,
+    "label": 1,
+    "simpler": "core"
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The nature of the person is good.",
+    "word": "nature",
+    "position": 1,
+    "label": 1
+  },
+  {
+    "sentence": "The task was overwhelming for the team.",
+    "word": "overwhelming",
+    "position": 3,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The heart of science is very complex.",
+    "word": "heart",
+    "position": 1,
+    "label": 1,
+    "simpler": "core"
+  }
+]

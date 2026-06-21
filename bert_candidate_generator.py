@@ -166,7 +166,7 @@ class BERTCandidateGenerator:
     """
 
     # Strict cosine thresholds
-    MIN_WORD_COS_SIM  = 0.75   # word-level embedding cosine similarity
+    MIN_WORD_COS_SIM  = 0.65   # word-level embedding cosine similarity
     MIN_SENT_SIM      = 0.90   # SBERT sentence similarity
     MIN_MLM_PROB      = 0.0005
     MIN_ZIPF_GAIN     = 0.0    # candidate must be at least as common as original
@@ -568,12 +568,34 @@ class BERTCandidateGenerator:
         if all_probs is None:
             _, all_probs = self._mlm_candidates(sentence, start_char, end_char, topn=1)
 
+        # Pre-filter using cheap Zipf and MLM probability checks to avoid expensive BERT/SBERT forward passes
+        cheap_candidates = []
+        for cand in sorted(raw_candidates):
+            cand_l = cand.lower()
+            if cand_l == target_word.lower():
+                continue
+            if not cand_l.isalpha() or ' ' in cand_l:
+                continue
+            cand_zipf = wordfreq.zipf_frequency(cand_l, 'en')
+            if cand_zipf <= orig_zipf + self.MIN_ZIPF_GAIN:
+                continue
+            toks = self.tokenizer(cand_l, add_special_tokens=False)['input_ids']
+            if not toks:
+                continue
+            mlm_prob = all_probs[toks[0]].item()
+            if mlm_prob < self.MIN_MLM_PROB:
+                continue
+            cheap_candidates.append(cand)
+
+        if not cheap_candidates:
+            return []
+
         # Pre-compute BERT embeddings for original
         orig_word_emb = self._get_word_emb(sentence, target_word, start_char)
         orig_sent_emb = self._get_sentence_emb_bert(sentence)
 
         filtered: List[str] = []
-        for cand in sorted(raw_candidates):
+        for cand in cheap_candidates:
             if self._passes_filters(
                 cand, target_word, sentence, start_char, end_char,
                 pos_tag or '', orig_zipf, all_probs,

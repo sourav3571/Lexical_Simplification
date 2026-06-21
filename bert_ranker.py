@@ -112,6 +112,7 @@ class GatedFusionRanker(nn.Module):
             nn.Sigmoid(),
         )
         self._init_weights()
+        self.is_trained = False
 
     def _init_weights(self) -> None:
         """
@@ -128,6 +129,16 @@ class GatedFusionRanker(nn.Module):
             self.net[0].bias.fill_(-1.0)
 
     def forward(self, features: torch.Tensor) -> torch.Tensor:
+        if not getattr(self, 'is_trained', False):
+            # Deterministic starting weights:
+            # 0.15 MLM, 0.40 SBERT, 0.15 surp, 0.15 fluency, 0.10 zipf, 0.05 glove
+            # Scaled by 4 for sigmoid range
+            w = torch.tensor([0.60, 1.60, 0.60, 0.60, 0.40, 0.20], dtype=torch.float32, device=features.device)
+            # Dot product along the last dimension
+            if features.dim() == 1:
+                return torch.sigmoid(torch.dot(features, w) - 1.0).unsqueeze(0)
+            else:
+                return torch.sigmoid(torch.mv(features, w) - 1.0).unsqueeze(-1)
         return self.net(features)
 
     # ── Single-candidate inference ────────────────────────────────────────────

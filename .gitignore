@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 
 # PyTorch Trained Weights (Large File)
-best_model.pt
+*.pt
 
 # Plots and Logs
 loss_curves.png

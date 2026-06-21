@@ -1,0 +1,142 @@
+[
+  {
+    "sentence": "The papers are stored under the weather report from recently.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The family kicked the bucket on the porch yesterday.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "They are sitting in the same boat on the lake.",
+    "phrase": "in the same boat",
+    "label": 0,
+    "meaning": "in the same situation",
+    "simpler": "in the same situation"
+  },
+  {
+    "sentence": "They burned the oil in the ancient lamp.",
+    "phrase": "burn the midnight oil",
+    "label": 0,
+    "meaning": "work very late",
+    "simpler": "worked very late"
+  },
+  {
+    "sentence": "She beat around the bush.",
+    "phrase": "beat around the bush",
+    "label": 1,
+    "meaning": "avoid main topic",
+    "simpler": "avoided the main point"
+  },
+  {
+    "sentence": "We heard that a teacher kicked the bucket at the moment.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The family kicked the bucket on the porch yesterday.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "They are in the same boat.",
+    "phrase": "in the same boat",
+    "label": 1,
+    "meaning": "in the same situation",
+    "simpler": "in the same situation"
+  },
+  {
+    "sentence": "The family kicked the bucket on the porch now.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from every day.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "She is feeling blue today.",
+    "phrase": "feel blue",
+    "label": 1,
+    "meaning": "sad or depressed",
+    "simpler": "sad"
+  },
+  {
+    "sentence": "Why did they spill the beans every day?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "He is crying over spilled milk on the counter.",
+    "phrase": "cry over spilled milk",
+    "label": 0,
+    "meaning": "worry about past events",
+    "simpler": "complaining about past mistakes"
+  },
+  {
+    "sentence": "The family spilled the beans into the cooking pot yesterday.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "Why did my friend spill the beans recently?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The student is under the weather yesterday.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "They spilled the beans into the cooking pot every day.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "They burned the midnight oil.",
+    "phrase": "burn the midnight oil",
+    "label": 1,
+    "meaning": "work very late",
+    "simpler": "worked very late"
+  },
+  {
+    "sentence": "Let's call it a day.",
+    "phrase": "call it a day",
+    "label": 1,
+    "meaning": "stop working",
+    "simpler": "stop working"
+  },
+  {
+    "sentence": "They kicked the bucket on the porch every day.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  }
+]

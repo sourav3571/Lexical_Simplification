@@ -45,8 +45,8 @@ class BERTValidator:
     # Gate thresholds (all tightened or upgraded)
     GATE1_MLM_FLOOR    = 0.001   # unchanged
     GATE2_SENT_SIM     = 0.70    # adjusted to 0.70 for SBERT space
-    GATE2_WORD_SIM     = 0.75    # unchanged
-    GATE3_FLUENCY_DROP = 0.40    # tightened from 0.70
+    GATE2_WORD_SIM     = 0.65    # relaxed to 0.65
+    GATE3_FLUENCY_DROP = 0.70    # relaxed to 0.70
     GATE4_ZIPF_CONFIRM = True    # NEW: require candidate_zipf > original_zipf
 
     def __init__(
@@ -112,12 +112,21 @@ class BERTValidator:
             return False
         orig_m = orig_tok.morph.to_dict()
         cand_m = cand_tok.morph.to_dict()
-        keys   = [k for k in orig_m if k in cand_m and k in {
+        features_to_check = {
             'Number', 'Tense', 'VerbForm', 'Degree',
-            'Person', 'Mood', 'Aspect', 'Case', 'Gender'}]
-        if not keys:
-            return True
-        return all(orig_m.get(k) == cand_m.get(k) for k in keys)
+            'Person', 'Mood', 'Aspect', 'Case', 'Gender'
+        }
+        
+        if pos1 == pos2:
+            keys_to_compare = [k for k in orig_m if k in features_to_check]
+            if not keys_to_compare:
+                return True
+            return all(cand_m.get(k) == orig_m.get(k) for k in keys_to_compare)
+        else:
+            keys_to_compare = [k for k in orig_m if k in cand_m and k in features_to_check]
+            if not keys_to_compare:
+                return True
+            return all(cand_m.get(k) == orig_m.get(k) for k in keys_to_compare)
 
 
     def get_sentence_embedding(self, sentence: str) -> torch.Tensor:

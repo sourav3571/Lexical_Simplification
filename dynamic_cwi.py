@@ -667,17 +667,17 @@ class DynamicContextualCWI:
             # Rule 5: Precision-first bypasses for rare nouns/adjectives/verbs
             
             is_complex = False
-            if word_zipf > getattr(self.cfg, 'zipf_always_simple', 5.2) and bert_s < getattr(self.cfg, 'bert_simple_threshold', 0.40):
+            if word_zipf >= getattr(self.cfg, 'zipf_always_simple', 5.2):
                 is_complex = False
-            elif drift_s > getattr(self.cfg, 'drift_alone_override', 0.42):
+            elif drift_s > getattr(self.cfg, 'drift_alone_override', 0.42) and word_zipf < 4.3:
                 is_complex = True
             elif drift_s > getattr(self.cfg, 'drift_pattern_override', 0.35) and pattern_detected != "None":
                 is_complex = True
             elif word_zipf < getattr(self.cfg, 'zipf_always_complex', 2.5):
                 is_complex = True
-            elif pos in ('NOUN', 'ADJ', 'PROPN') and word_zipf < 4.5 and bert_s > 0.50:
+            elif pos in ('NOUN', 'ADJ', 'PROPN') and word_zipf < 4.3 and bert_s > 0.58:
                 is_complex = True
-            elif pos == 'VERB' and word_zipf < 4.5 and bert_s > 0.75:
+            elif pos == 'VERB' and word_zipf < 4.3 and bert_s > 0.65:
                 is_complex = True
             else:
                 is_complex = ens >= eff_thresh

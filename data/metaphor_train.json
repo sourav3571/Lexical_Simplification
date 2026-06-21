@@ -1,0 +1,1063 @@
+[
+  {
+    "sentence": "The pain of the situation was everlasting.",
+    "word": "everlasting",
+    "position": 6,
+    "label": 1,
+    "simpler": "permanent"
+  },
+  {
+    "sentence": "The heart of law is very complex.",
+    "word": "heart",
+    "position": 1,
+    "label": 1,
+    "simpler": "core"
+  },
+  {
+    "sentence": "The face was clean and dry.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The heart of science is very complex.",
+    "word": "heart",
+    "position": 1,
+    "label": 1,
+    "simpler": "core"
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The root of law is very complex.",
+    "word": "root",
+    "position": 1,
+    "label": 1,
+    "simpler": "basis"
+  },
+  {
+    "sentence": "The seeds of doubt were planted.",
+    "word": "seeds",
+    "position": 1,
+    "label": 1
+  },
+  {
+    "sentence": "The heart of the problem is trust.",
+    "word": "heart",
+    "position": 1,
+    "label": 1
+  },
+  {
+    "sentence": "The heart of law is very complex.",
+    "word": "heart",
+    "position": 1,
+    "label": 1,
+    "simpler": "core"
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The root of success is very complex.",
+    "word": "root",
+    "position": 1,
+    "label": 1,
+    "simpler": "basis"
+  },
+  {
+    "sentence": "The root was clean and dry.",
+    "word": "root",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The root was clean and dry.",
+    "word": "root",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature of success is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The face was clean and dry.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The face of education is very complex.",
+    "word": "face",
+    "position": 1,
+    "label": 1,
+    "simpler": "reality"
+  },
+  {
+    "sentence": "The glowing embers illuminated the campsite.",
+    "word": "glowing",
+    "position": 1,
+    "label": 0,
+    "simpler": "shining"
+  },
+  {
+    "sentence": "His heart beats very fast.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was overwhelming.",
+    "word": "overwhelming",
+    "position": 6,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The wall of silence was broken.",
+    "word": "wall",
+    "position": 1,
+    "label": 1
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The pain of the situation was everlasting.",
+    "word": "everlasting",
+    "position": 6,
+    "label": 1,
+    "simpler": "permanent"
+  },
+  {
+    "sentence": "The pain of the situation was overwhelming.",
+    "word": "overwhelming",
+    "position": 6,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The face was clean and dry.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The spirit was clean and dry.",
+    "word": "spirit",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The spirit was summoned during the seance.",
+    "word": "spirit",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The heart was clean and dry.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature of law is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The root was clean and dry.",
+    "word": "root",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The path in the park is narrow.",
+    "word": "path",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The bitter coffee tasted bad.",
+    "word": "bitter",
+    "position": 1,
+    "label": 0,
+    "simpler": "sour"
+  },
+  {
+    "sentence": "The pain of the situation was everlasting.",
+    "word": "everlasting",
+    "position": 6,
+    "label": 1,
+    "simpler": "permanent"
+  },
+  {
+    "sentence": "The pain of the situation was everlasting.",
+    "word": "everlasting",
+    "position": 6,
+    "label": 1,
+    "simpler": "permanent"
+  },
+  {
+    "sentence": "The spirit of poverty is very complex.",
+    "word": "spirit",
+    "position": 1,
+    "label": 1,
+    "simpler": "meaning"
+  },
+  {
+    "sentence": "The pain of the situation was everlasting.",
+    "word": "everlasting",
+    "position": 6,
+    "label": 1,
+    "simpler": "permanent"
+  },
+  {
+    "sentence": "The warm soup tasted delicious.",
+    "word": "warm",
+    "position": 1,
+    "label": 0,
+    "simpler": "hot"
+  },
+  {
+    "sentence": "The root of conflict is very complex.",
+    "word": "root",
+    "position": 1,
+    "label": 1,
+    "simpler": "basis"
+  },
+  {
+    "sentence": "The pain of the situation was overwhelming.",
+    "word": "overwhelming",
+    "position": 6,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The bank near the river flooded.",
+    "word": "bank",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was overwhelming.",
+    "word": "overwhelming",
+    "position": 6,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The heart of art is very complex.",
+    "word": "heart",
+    "position": 1,
+    "label": 1,
+    "simpler": "core"
+  },
+  {
+    "sentence": "The heart of science is very complex.",
+    "word": "heart",
+    "position": 1,
+    "label": 1,
+    "simpler": "core"
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature of life is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The face of science is very complex.",
+    "word": "face",
+    "position": 1,
+    "label": 1,
+    "simpler": "reality"
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was everlasting.",
+    "word": "everlasting",
+    "position": 6,
+    "label": 1,
+    "simpler": "permanent"
+  },
+  {
+    "sentence": "The face was clean and dry.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The heart of education is very complex.",
+    "word": "heart",
+    "position": 1,
+    "label": 1,
+    "simpler": "core"
+  },
+  {
+    "sentence": "The spirit of law is very complex.",
+    "word": "spirit",
+    "position": 1,
+    "label": 1,
+    "simpler": "meaning"
+  },
+  {
+    "sentence": "The nature of conflict is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The face of poverty is visible.",
+    "word": "face",
+    "position": 1,
+    "label": 1
+  },
+  {
+    "sentence": "The heart was clean and dry.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The wall of the house is brick.",
+    "word": "wall",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was everlasting.",
+    "word": "everlasting",
+    "position": 6,
+    "label": 1,
+    "simpler": "permanent"
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was everlasting.",
+    "word": "everlasting",
+    "position": 6,
+    "label": 1,
+    "simpler": "permanent"
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was overwhelming.",
+    "word": "overwhelming",
+    "position": 6,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The root of problem is very complex.",
+    "word": "root",
+    "position": 1,
+    "label": 1,
+    "simpler": "basis"
+  },
+  {
+    "sentence": "The weight of responsibility is heavy.",
+    "word": "weight",
+    "position": 1,
+    "label": 1
+  },
+  {
+    "sentence": "The seeds of the sunflower are edible.",
+    "word": "seeds",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The spirit was clean and dry.",
+    "word": "spirit",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The root was clean and dry.",
+    "word": "root",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The heart was clean and dry.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The face of law is very complex.",
+    "word": "face",
+    "position": 1,
+    "label": 1,
+    "simpler": "reality"
+  },
+  {
+    "sentence": "The heart was clean and dry.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature of poverty is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The face of difficulty is very complex.",
+    "word": "face",
+    "position": 1,
+    "label": 1,
+    "simpler": "reality"
+  },
+  {
+    "sentence": "The face of life is very complex.",
+    "word": "face",
+    "position": 1,
+    "label": 1,
+    "simpler": "reality"
+  },
+  {
+    "sentence": "The nature of problem is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The spirit of conflict is very complex.",
+    "word": "spirit",
+    "position": 1,
+    "label": 1,
+    "simpler": "meaning"
+  },
+  {
+    "sentence": "The nature of success is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The nature of law is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "This is a sharp contrast to before.",
+    "word": "sharp",
+    "position": 3,
+    "label": 1,
+    "simpler": "clear"
+  },
+  {
+    "sentence": "The fruits in the basket are sweet.",
+    "word": "fruits",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The face was clean and dry.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was overwhelming.",
+    "word": "overwhelming",
+    "position": 6,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The nature of difficulty is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The root was clean and dry.",
+    "word": "root",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The heart of success is very complex.",
+    "word": "heart",
+    "position": 1,
+    "label": 1,
+    "simpler": "core"
+  },
+  {
+    "sentence": "The face of success is very complex.",
+    "word": "face",
+    "position": 1,
+    "label": 1,
+    "simpler": "reality"
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The feeling was overwhelming.",
+    "word": "overwhelming",
+    "position": 3,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The heart of art is very complex.",
+    "word": "heart",
+    "position": 1,
+    "label": 1,
+    "simpler": "core"
+  },
+  {
+    "sentence": "The nature of art is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The spirit of the law matters.",
+    "word": "spirit",
+    "position": 1,
+    "label": 1
+  },
+  {
+    "sentence": "He gave a glowing report of the event.",
+    "word": "glowing",
+    "position": 3,
+    "label": 1,
+    "simpler": "positive"
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The root was clean and dry.",
+    "word": "root",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The face was clean and dry.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature of law is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The root of art is very complex.",
+    "word": "root",
+    "position": 1,
+    "label": 1,
+    "simpler": "basis"
+  },
+  {
+    "sentence": "The pain of the situation was overwhelming.",
+    "word": "overwhelming",
+    "position": 6,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The sharp knife cut the bread easily.",
+    "word": "sharp",
+    "position": 1,
+    "label": 0,
+    "simpler": "pointed"
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The root of education is very complex.",
+    "word": "root",
+    "position": 1,
+    "label": 1,
+    "simpler": "basis"
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The heart was clean and dry.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was overwhelming.",
+    "word": "overwhelming",
+    "position": 6,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The root of art is very complex.",
+    "word": "root",
+    "position": 1,
+    "label": 1,
+    "simpler": "basis"
+  },
+  {
+    "sentence": "The shield of faith protects them.",
+    "word": "shield",
+    "position": 1,
+    "label": 1
+  },
+  {
+    "sentence": "The pain of the situation was everlasting.",
+    "word": "everlasting",
+    "position": 6,
+    "label": 1,
+    "simpler": "permanent"
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The root of the tree is deep.",
+    "word": "root",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The root of success is very complex.",
+    "word": "root",
+    "position": 1,
+    "label": 1,
+    "simpler": "basis"
+  },
+  {
+    "sentence": "The heart was clean and dry.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The heart was clean and dry.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The root was clean and dry.",
+    "word": "root",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The heart was clean and dry.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The face of life is very complex.",
+    "word": "face",
+    "position": 1,
+    "label": 1,
+    "simpler": "reality"
+  },
+  {
+    "sentence": "The root was clean and dry.",
+    "word": "root",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The root was clean and dry.",
+    "word": "root",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature of difficulty is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The nature of education is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The pain was excruciating.",
+    "word": "excruciating",
+    "position": 3,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The face was clean and dry.",
+    "word": "face",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The nature of science is very complex.",
+    "word": "nature",
+    "position": 1,
+    "label": 1,
+    "simpler": "character"
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The fruits of labor are sweet.",
+    "word": "fruits",
+    "position": 1,
+    "label": 1
+  },
+  {
+    "sentence": "The face of conflict is very complex.",
+    "word": "face",
+    "position": 1,
+    "label": 1,
+    "simpler": "reality"
+  },
+  {
+    "sentence": "The heart was clean and dry.",
+    "word": "heart",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was overwhelming.",
+    "word": "overwhelming",
+    "position": 6,
+    "label": 1,
+    "simpler": "intense"
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The weight of the box is heavy.",
+    "word": "weight",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was enduring.",
+    "word": "enduring",
+    "position": 6,
+    "label": 1,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "She has a warm personality.",
+    "word": "warm",
+    "position": 3,
+    "label": 1,
+    "simpler": "friendly"
+  },
+  {
+    "sentence": "The root was clean and dry.",
+    "word": "root",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The pain of the situation was excruciating.",
+    "word": "excruciating",
+    "position": 6,
+    "label": 1,
+    "simpler": "severe"
+  },
+  {
+    "sentence": "The path of righteousness is narrow.",
+    "word": "path",
+    "position": 1,
+    "label": 1
+  },
+  {
+    "sentence": "The root of poverty is very complex.",
+    "word": "root",
+    "position": 1,
+    "label": 1,
+    "simpler": "basis"
+  },
+  {
+    "sentence": "The heart of success is very complex.",
+    "word": "heart",
+    "position": 1,
+    "label": 1,
+    "simpler": "core"
+  },
+  {
+    "sentence": "The heart of poverty is very complex.",
+    "word": "heart",
+    "position": 1,
+    "label": 1,
+    "simpler": "core"
+  },
+  {
+    "sentence": "The concrete wall is enduring.",
+    "word": "enduring",
+    "position": 4,
+    "label": 0,
+    "simpler": "lasting"
+  },
+  {
+    "sentence": "The root of difficulty is very complex.",
+    "word": "root",
+    "position": 1,
+    "label": 1,
+    "simpler": "basis"
+  },
+  {
+    "sentence": "The nature was clean and dry.",
+    "word": "nature",
+    "position": 1,
+    "label": 0
+  },
+  {
+    "sentence": "The face of conflict is very complex.",
+    "word": "face",
+    "position": 1,
+    "label": 1,
+    "simpler": "reality"
+  }
+]

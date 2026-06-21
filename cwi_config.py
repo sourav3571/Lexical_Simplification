@@ -55,13 +55,13 @@ class CWIConfig:
     drift_pattern_override: float = 0.35
     drift_alone_override:   float = 0.42
     zipf_always_complex:    float = 2.5
-    zipf_always_simple:     float = 5.2
+    zipf_always_simple:     float = 5.0
     bert_simple_threshold:  float = 0.40
 
     # Dynamic threshold
     dynamic_k_figurative:   float = 0.4
-    dynamic_k_standard:     float = 0.5
-    min_threshold:          float = 0.30
+    dynamic_k_standard:     float = 0.4
+    min_threshold:          float = 0.32
     max_threshold:          float = 0.65
 
     # Frequency adjustment
@@ -78,10 +78,10 @@ class CWIConfig:
     # Legacy configuration options kept for safety/fallback
     k_std:                  float = 0.5
     threshold_floor:        float = 0.30
-    short_sentence_limit:   int   = 4
-    short_sentence_threshold: float = 0.52
+    short_sentence_limit:   int   = 6
+    short_sentence_threshold: float = 0.35
     drift_override_threshold: float = 0.42
-    zipf_hard_ceiling:      float = 5.2
+    zipf_hard_ceiling:      float = 5.5
 
     # ── Logging ────────────────────────────────────────────────────────────────
     verbose: bool = True

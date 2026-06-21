@@ -1,0 +1,1122 @@
+[
+  {
+    "sentence": "We heard that she kicked the bucket yesterday.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "They kicked the bucket on the porch every day.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from recently.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The family kicked the bucket on the porch at the moment.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "A teacher spilled the beans into the cooking pot at the moment.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "My friend kicked the bucket on the porch last week.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The surgeon replaced the arm and a leg.",
+    "phrase": "cost an arm and a leg",
+    "label": 0,
+    "meaning": "very expensive",
+    "simpler": "was very expensive"
+  },
+  {
+    "sentence": "She is under the weather today.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "She is under the weather yesterday.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "Why did she spill the beans today?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The family is under the weather now.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "Why did the doctor spill the beans last week?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "Why did a teacher spill the beans last week?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "She is under the weather at the moment.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "Why did the family spill the beans recently?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from last week.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "She spilled the beans into the cooking pot today.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The worker is under the weather today.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "He has a change of heart.",
+    "phrase": "change of heart",
+    "label": 1,
+    "meaning": "change opinion or attitude",
+    "simpler": "change of mind"
+  },
+  {
+    "sentence": "The thermometer was placed under the weather instrument.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The family spilled the beans into the cooking pot recently.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "He hit the nail on the head with a heavy hammer.",
+    "phrase": "hit the nail on the head",
+    "label": 0,
+    "meaning": "be exactly right",
+    "simpler": "was exactly right"
+  },
+  {
+    "sentence": "We heard that she kicked the bucket today.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "We heard that a teacher kicked the bucket last week.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "We heard that they kicked the bucket every day.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "We heard that they kicked the bucket every day.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from now.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "Why did a teacher spill the beans at the moment?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The chef spilled the beans on the floor.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "Why did the family spill the beans at the moment?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The priest began to speak of the devil.",
+    "phrase": "speak of the devil",
+    "label": 0,
+    "meaning": "person spoken of arrives",
+    "simpler": "the person we were talking about"
+  },
+  {
+    "sentence": "Why did my friend spill the beans last week?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The car cost an arm and a leg.",
+    "phrase": "cost an arm and a leg",
+    "label": 1,
+    "meaning": "very expensive",
+    "simpler": "was very expensive"
+  },
+  {
+    "sentence": "Speak of the devil and he appears.",
+    "phrase": "speak of the devil",
+    "label": 1,
+    "meaning": "person spoken of arrives",
+    "simpler": "the person we were talking about"
+  },
+  {
+    "sentence": "The family spilled the beans into the cooking pot yesterday.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "She spilled the beans into the cooking pot yesterday.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "My friend kicked the bucket on the porch recently.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The family spilled the beans into the cooking pot at the moment.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "This is a piece of cake.",
+    "phrase": "piece of cake",
+    "label": 1,
+    "meaning": "very easy",
+    "simpler": "very easy"
+  },
+  {
+    "sentence": "The family is under the weather every day.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The doctor spilled the beans into the cooking pot last week.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "We heard that my friend kicked the bucket recently.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "Let's break the ice before the meeting.",
+    "phrase": "break the ice",
+    "label": 1,
+    "meaning": "make people comfortable",
+    "simpler": "make people feel comfortable"
+  },
+  {
+    "sentence": "We heard that a teacher kicked the bucket at the moment.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "They is under the weather every day.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The family is under the weather yesterday.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from last week.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "A teacher is under the weather at the moment.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The student kicked the bucket on the porch yesterday.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from recently.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The worker spilled the beans into the cooking pot recently.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from now.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The worker kicked the bucket on the porch recently.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "A teacher kicked the bucket on the porch at the moment.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "She kicked the bucket on the porch today.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "He kicked the bucket last year.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from every day.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "We heard that the family kicked the bucket at the moment.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "We must bite the bullet now.",
+    "phrase": "bite the bullet",
+    "label": 1,
+    "meaning": "endure something painful",
+    "simpler": "endure it"
+  },
+  {
+    "sentence": "Why did she spill the beans at the moment?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "We heard that the worker kicked the bucket recently.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "Once in a blue moon we meet.",
+    "phrase": "once in a blue moon",
+    "label": 1,
+    "meaning": "very rarely",
+    "simpler": "very rarely"
+  },
+  {
+    "sentence": "We heard that the family kicked the bucket recently.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "Why did the family spill the beans every day?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The worker spilled the beans into the cooking pot today.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "We heard that she kicked the bucket at the moment.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "They kicked the bucket on the porch recently.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "He let the cat out of the bag in the barn.",
+    "phrase": "let the cat out of the bag",
+    "label": 0,
+    "meaning": "reveal secret accidentally",
+    "simpler": "accidentally revealed the secret"
+  },
+  {
+    "sentence": "He hit the nail on the head.",
+    "phrase": "hit the nail on the head",
+    "label": 1,
+    "meaning": "be exactly right",
+    "simpler": "was exactly right"
+  },
+  {
+    "sentence": "The family spilled the beans into the cooking pot every day.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "Why did a teacher spill the beans at the moment?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from last week.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from yesterday.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "We heard that the student kicked the bucket today.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "They spilled the beans into the cooking pot every day.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "He is under the weather now.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "Why did the worker spill the beans recently?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "She kicked the bucket on the porch at the moment.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "We heard that the family kicked the bucket yesterday.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The student is under the weather at the moment.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The student kicked the bucket on the porch today.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "My friend is under the weather last week.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "A teacher kicked the bucket on the porch at the moment.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The worker kicked the bucket on the porch today.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "A teacher is under the weather at the moment.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "I want a piece of cake for dessert.",
+    "phrase": "piece of cake",
+    "label": 0,
+    "meaning": "very easy",
+    "simpler": "very easy"
+  },
+  {
+    "sentence": "Who let the cat out of the bag?",
+    "phrase": "let the cat out of the bag",
+    "label": 1,
+    "meaning": "reveal secret accidentally",
+    "simpler": "accidentally revealed the secret"
+  },
+  {
+    "sentence": "Why did the family spill the beans now?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "My friend spilled the beans into the cooking pot last week.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The family kicked the bucket on the porch every day.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "My friend spilled the beans into the cooking pot recently.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from today.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The family is under the weather yesterday.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The worker is under the weather recently.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from recently.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "We heard that the student kicked the bucket yesterday.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "She is wearing blue today.",
+    "phrase": "feel blue",
+    "label": 0,
+    "meaning": "sad or depressed",
+    "simpler": "sad"
+  },
+  {
+    "sentence": "They is under the weather every day.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "They is under the weather recently.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "He spilled the beans into the cooking pot now.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "We heard that the family kicked the bucket every day.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "He spilled the beans about the plan.",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "Let's call it a day of celebration.",
+    "phrase": "call it a day",
+    "label": 0,
+    "meaning": "stop working",
+    "simpler": "stop working"
+  },
+  {
+    "sentence": "The student spilled the beans into the cooking pot last week.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "He spilled the beans into the cooking pot now.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "Why did he spill the beans now?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from today.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "A teacher is under the weather last week.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "We heard that the student kicked the bucket at the moment.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "Why did the worker spill the beans today?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The student is under the weather last week.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "We heard that my friend kicked the bucket last week.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "He is crying over spilled milk.",
+    "phrase": "cry over spilled milk",
+    "label": 1,
+    "meaning": "worry about past events",
+    "simpler": "complaining about past mistakes"
+  },
+  {
+    "sentence": "We heard that he kicked the bucket now.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The doctor kicked the bucket on the porch last week.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "We heard that the family kicked the bucket now.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from yesterday.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "We heard that the worker kicked the bucket today.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "A teacher kicked the bucket on the porch last week.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "You should keep an eye on the optical scanner.",
+    "phrase": "keep an eye on",
+    "label": 0,
+    "meaning": "watch closely",
+    "simpler": "watch"
+  },
+  {
+    "sentence": "She spilled the beans into the cooking pot at the moment.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from at the moment.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "She beat around the bush to flush out the rabbit.",
+    "phrase": "beat around the bush",
+    "label": 0,
+    "meaning": "avoid main topic",
+    "simpler": "avoided the main point"
+  },
+  {
+    "sentence": "The student is under the weather today.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "Why did they spill the beans every day?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from last week.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from today.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "Why did she spill the beans yesterday?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from yesterday.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "We heard that they kicked the bucket today.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "He is under the weather now.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from today.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "They spilled the beans into the cooking pot today.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "Why did they spill the beans recently?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The student kicked the bucket on the porch at the moment.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The family kicked the bucket on the porch recently.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "Don't pull my leg, it is sore from running.",
+    "phrase": "pull my leg",
+    "label": 0,
+    "meaning": "tease or play a joke",
+    "simpler": "joke with me"
+  },
+  {
+    "sentence": "We heard that the student kicked the bucket last week.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "A teacher spilled the beans into the cooking pot at the moment.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "Why did the student spill the beans yesterday?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "My friend is under the weather recently.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "Why did the family spill the beans yesterday?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The soldier had to bite the bullet during surgery.",
+    "phrase": "bite the bullet",
+    "label": 0,
+    "meaning": "endure something painful",
+    "simpler": "endure it"
+  },
+  {
+    "sentence": "He kicked the bucket on the porch now.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "Why did they spill the beans today?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The student spilled the beans into the cooking pot yesterday.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The family spilled the beans into the cooking pot now.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "You should keep an eye on him.",
+    "phrase": "keep an eye on",
+    "label": 1,
+    "meaning": "watch closely",
+    "simpler": "watch"
+  },
+  {
+    "sentence": "We heard that he kicked the bucket now.",
+    "phrase": "kick the bucket",
+    "label": 1,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "The patient needs a change of heart valves.",
+    "phrase": "change of heart",
+    "label": 0,
+    "meaning": "change opinion or attitude",
+    "simpler": "change of mind"
+  },
+  {
+    "sentence": "The papers are stored under the weather report from now.",
+    "phrase": "under the weather",
+    "label": 0,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "They spilled the beans into the cooking pot recently.",
+    "phrase": "spill the beans",
+    "label": 0,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "We need to break the ice on the frozen lake.",
+    "phrase": "break the ice",
+    "label": 0,
+    "meaning": "make people comfortable",
+    "simpler": "make people feel comfortable"
+  },
+  {
+    "sentence": "She kicked the bucket on the porch yesterday.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "They is under the weather today.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  },
+  {
+    "sentence": "They kicked the bucket on the porch today.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "Don't pull my leg like that.",
+    "phrase": "pull my leg",
+    "label": 1,
+    "meaning": "tease or play a joke",
+    "simpler": "joke with me"
+  },
+  {
+    "sentence": "He kicked the bucket on the porch now.",
+    "phrase": "kick the bucket",
+    "label": 0,
+    "meaning": "to die",
+    "simpler": "died"
+  },
+  {
+    "sentence": "Why did the student spill the beans last week?",
+    "phrase": "spill the beans",
+    "label": 1,
+    "meaning": "reveal a secret",
+    "simpler": "revealed the secret"
+  },
+  {
+    "sentence": "The family is under the weather at the moment.",
+    "phrase": "under the weather",
+    "label": 1,
+    "meaning": "feeling ill",
+    "simpler": "feeling sick"
+  }
+]
