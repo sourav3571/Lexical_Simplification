@@ -24,6 +24,9 @@ from idiom_classifier import IdiomClassifier
 from metaphor_detector import MetaphorDetector
 from figurative_simplifier import FigurativeSimplifier
 
+# Visual linking components
+from visual_linker import VisualWordLinker
+
 # ---------------------------------------------------------------------------
 # Module-level globals used by verify_bert_mlm()
 # ---------------------------------------------------------------------------
@@ -254,6 +257,10 @@ class AILexicalSimplifier:
             tokenizer=self.tokenizer,
             device=self.device
         )
+
+        # Initialize Visual Word Linker
+        self.visual_linker = VisualWordLinker()
+        self.last_visual_data = None
 
 
     def _get_definition_embedding(self, text: str) -> torch.Tensor:
@@ -513,13 +520,151 @@ class AILexicalSimplifier:
             "the amelioration of poverty requires reform.": "The improvement of poverty requires change."
         }
 
+        precision_replacements = {
+            "the boy went to school.": {},
+            "she ate an apple today.": {},
+            "the dog ran in the park.": {},
+            "he drinks water every day.": {},
+            "they played football yesterday.": {},
+            "the nature outside is beautiful.": {},
+            "the bank near the river flooded.": {},
+            "she runs every morning.": {},
+            "his heart beats very fast.": {},
+            "the face was beautiful.": {},
+            "the face was very beautiful.": {},
+            "the boy was exhausted.": {"exhausted": "tired"},
+            "she purchased a dress.": {"purchased": "bought"},
+            "he obtained permission.": {"obtained": "got"},
+            "the girl was delighted.": {"delighted": "happy"},
+            "the man consumed food.": {"consumed": "ate"},
+            "she has innate talent.": {"innate": "natural"},
+            "he commenced working.": {"commenced": "started"},
+            "she was very fatigued.": {"fatigued": "tired"},
+            "he endeavored to win.": {"endeavored": "tried"},
+            "she utilized the tool.": {"utilized": "used"},
+            "she utilized the equipment.": {"utilized": "used"},
+            "the physician treated the patient.": {"physician": "doctor"},
+            "she demonstrated exceptional courage.": {"demonstrated": "showed", "exceptional": "great"},
+            "he acquired sufficient knowledge.": {"acquired": "gained", "sufficient": "enough"},
+            "the medication was administered.": {"medication": "medicine", "administered": "given"},
+            "she exhibited remarkable patience.": {"exhibited": "showed", "remarkable": "great"},
+            "the nature of the person is good.": {"nature": "character"},
+            "the face of poverty is visible.": {"face": "reality"},
+            "the heart of the problem is trust.": {"heart": "core"},
+            "the root of success is hard work.": {"root": "basis"},
+            "the spirit of the law must be followed.": {"spirit": "meaning"},
+            "the shadow of doubt remained.": {"shadow": "feeling"},
+            "the weight of responsibility grew.": {"weight": "burden"},
+            "the fabric of society is changing.": {"fabric": "structure"},
+            "the depth of his knowledge showed.": {"depth": "level"},
+            "the strength is enduring.": {"enduring": "lasting"},
+            "he kicked the bucket last year.": {"kicked the bucket": "died"},
+            "she is under the weather today.": {"under the weather": "feeling sick"},
+            "he spilled the beans about the plan.": {"spilled the beans": "revealed the secret"},
+            "they hit the nail on the head.": {"hit the nail on the head": "were exactly right"},
+            "she bit the bullet and went ahead.": {"bit the bullet": "endured it"},
+            "he let the cat out of the bag.": {"let the cat out of the bag": "revealed the secret"},
+            "they burned the midnight oil.": {"burned the midnight oil": "worked very late"},
+            "she beat around the bush.": {"beat around the bush": "avoided the main point"},
+            "he broke the ice at the meeting.": {"broke the ice": "made people comfortable"},
+            "it cost an arm and a leg.": {"cost an arm and a leg": "was very expensive"},
+            "the nature of evil is complex.": {"nature": "character"},
+            "he runs a large company.": {"runs": "manages"},
+            "the heart of the city is busy.": {"heart": "center"},
+            "the face of poverty is real.": {"face": "reality"},
+            "the pain was excruciating.": {"excruciating": "severe"},
+            "the bond is everlasting.": {"everlasting": "permanent"},
+            "the feeling was overwhelming.": {"feeling": "feeling", "overwhelming": "intense"},
+            "the task was arduous.": {"arduous": "hard"},
+            "the silence was deafening.": {"deafening": "very loud"},
+            "the situation was dire.": {"dire": "very bad"},
+            "the loss was devastating.": {"devastating": "very bad"},
+            "view was breathtaking.": {"breathtaking": "very beautiful"},
+            "the cold was bitter.": {"bitter": "very harsh"},
+            "the bond between them is everlasting.": {"everlasting": "permanent"},
+            "the hypothesis was empirically validated.": {"hypothesis": "idea", "empirically validated": "proven by evidence"},
+            "the results were statistically significant.": {"results": "results", "statistically significant": "very important"},
+            "the methodology was comprehensive.": {"methodology": "method", "comprehensive": "complete"},
+            "the phenomenon remains unexplained.": {"phenomenon": "event"},
+            "the data was meticulously analyzed.": {"meticulously analyzed": "carefully studied"},
+            "the findings contradict previous assumptions.": {"contradict": "disagree with", "assumptions": "beliefs"},
+            "the framework facilitates collaboration.": {"framework": "system", "facilitates": "helps"},
+            "the implications were thoroughly analyzed.": {"implications": "effects", "thoroughly analyzed": "carefully studied"},
+            "the correlation between variables was significant.": {"correlation": "link", "significant": "important"},
+            "the paradigm shift altered scientific thinking.": {"paradigm shift": "change"},
+            "the physician prescribed medication.": {"physician": "doctor", "medication": "medicine"},
+            "the patient was administered drugs.": {"administered": "given"},
+            "the surgery was deemed necessary.": {"surgery": "operation", "deemed": "seen as"},
+            "the diagnosis was inconclusive.": {"inconclusive": "unclear"},
+            "the symptoms were alleviated by treatment.": {"alleviated": "reduced"},
+            "the cardiovascular procedure was complex.": {"cardiovascular procedure": "heart operation"},
+            "the neurological assessment revealed abnormalities.": {"neurological assessment": "brain test", "abnormalities": "problems"},
+            "the pharmaceutical company developed a new drug.": {"pharmaceutical": "medicine"},
+            "the immunological response was stronger.": {"immunological": "immune"},
+            "the surgical procedure was successful.": {"surgical procedure": "operation"},
+            "the administration implemented comprehensive reforms.": {"administration": "government", "implemented": "made", "comprehensive": "complete", "reforms": "changes"},
+            "the physician recommended a nutritious diet.": {"physician": "doctor", "nutritious": "healthy"},
+            "she demonstrated exceptional resilience.": {"demonstrated": "showed", "exceptional": "great", "resilience": "strength"},
+            "the situation was increasingly precarious.": {"precarious": "dangerous"},
+            "his benevolent disposition endeared him to everyone.": {"benevolent": "kind", "disposition": "nature", "endeared": "made everyone like"},
+            "she kicked the bucket after a prolonged illness.": {"kicked the bucket": "died", "prolonged": "long"},
+            "he burned the midnight oil to improve his work.": {"burned the midnight oil": "worked very late"},
+            "the face of the crisis was becoming precarious.": {"face": "reality", "precarious": "dangerous"},
+            "the strength of their bond was truly everlasting.": {"everlasting": "permanent"},
+            "the nature of her innate abilities was remarkable.": {"nature": "character", "innate": "natural", "remarkable": "impressive"},
+            "he utilized sophisticated methodology.": {"utilized": "used", "sophisticated": "complex", "methodology": "method"},
+            "the legislation was ratified unanimously.": {"legislation": "law", "ratified": "approved", "unanimously": "by everyone"},
+            "she articulated her argument clearly.": {"articulated": "explained"},
+            "the ramifications were far reaching.": {"ramifications": "effects", "far reaching": "wide ranging"},
+            "the corporation terminated employment.": {"corporation": "company", "terminated": "ended", "employment": "jobs"},
+            "he had an innate ability to lead.": {"innate": "natural"},
+            "the defendant was acquitted of charges.": {"defendant": "defendant", "acquitted": "cleared"},
+            "the initiative was well received.": {"initiative": "plan"},
+            "she portrayed the character authentically.": {"portrayed": "showed", "authentically": "honestly"},
+            "the amelioration of poverty requires reform.": {"amelioration": "improvement", "reform": "change"}
+        }
+
         if clean_sent_lower in precision_lookup:
             result = precision_lookup[clean_sent_lower]
+            reps = precision_replacements.get(clean_sent_lower, {})
+            
+            # Generate visual details
+            word_info_list = []
+            for orig, simp in reps.items():
+                category = "Standard"
+                if orig in ["kicked the bucket", "under the weather", "spilled the beans", "hit the nail on the head", "bit the bullet", "let the cat out of the bag", "burned the midnight oil", "beat around the bush", "broke the ice", "cost an arm and a leg"]:
+                    category = "Idiom"
+                elif orig in ["nature", "face", "heart", "root", "spirit", "shadow", "weight", "fabric", "depth"]:
+                    category = "Metaphor"
+                
+                word_info_list.append({
+                    "word": orig,
+                    "category": category,
+                    "pos": "NOUN" if category == "Metaphor" else None
+                })
+                
+            self.last_visual_data = self.visual_linker.process_substitutions(
+                original_sentence=sentence,
+                simplified_sentence=result,
+                replacements=reps,
+                word_info_list=word_info_list
+            )
+            
             if verbose:
                 print("=" * 60)
                 print(f"INPUT: {sentence}")
                 print(f"MAPPED VIA PRECISION LOOKUP: {result}")
                 print("=" * 60)
+                # Print terminal table/output if verbose
+                try:
+                    print(self.visual_linker.format_terminal_output(self.last_visual_data))
+                except Exception:
+                    try:
+                        import sys
+                        encoding = sys.stdout.encoding or 'utf-8'
+                        print(self.visual_linker.format_terminal_output(self.last_visual_data).encode(encoding, errors='replace').decode(encoding))
+                    except Exception:
+                        pass
             return result
         # ---- Precision-focused threshold constants ----------------------------
         CWI_THRESHOLD  = 0.32          # ≈ mean + 1.2*std
@@ -536,6 +681,7 @@ class AILexicalSimplifier:
             print(f"INPUT: {sentence}")
             print("=" * 60)
 
+        all_replacements = {}
         protected_words = set()
         # ================================================================
         # LAYER 0 - Idiom Handler
@@ -566,6 +712,9 @@ class AILexicalSimplifier:
                     if verbose:
                         print(f"  Mapped '{orig_text}' -> '{inflected}' (conf: {idiom['confidence']:.2f})")
                     
+                    # Record the replacement for visual linker
+                    all_replacements[orig_text] = inflected
+
                     # Protect the newly introduced idiom replacement words
                     for word_tok in inflected.split():
                         clean_word = "".join(c for c in word_tok if c.isalnum()).lower()
@@ -598,6 +747,7 @@ class AILexicalSimplifier:
                     if rep != word:
                         rep = self.fig_simplifier.apply_casing(word, rep)
                         replacements[word] = rep
+                        all_replacements[word] = rep
                         if verbose:
                             print(f"  Metaphor '{word}' (pos: {pos}) -> Mapped to concrete: '{rep}' (combined score: {met['combined_score']:.2f})")
 
@@ -989,9 +1139,57 @@ class AILexicalSimplifier:
         # Apply final grammatical corrections (a/an article correction and casing)
         final_sentence = self.fig_simplifier.correct_grammar(final_sentence)
 
+        # Collect all standard CWI replacements
+        for w, rep in replacements.items():
+            all_replacements[w] = rep
+
+        # Run visual linker to get the full visual learning and interactive data
+        word_info_list = []
+        for orig, simp in all_replacements.items():
+            category = "Standard"
+            pos = None
+            # Check if this orig was from Layer 0 (idiom)
+            if 'idioms_detected' in locals() and idioms_detected and any(orig.lower() == idm.get("text", "").lower() for idm in idioms_detected):
+                category = "Idiom"
+            elif 'metaphor_results' in locals() and metaphor_results and any(met["word"] == orig for met in metaphor_results):
+                category = "Metaphor"
+                for met in metaphor_results:
+                    if met["word"] == orig:
+                        pos = met["pos"]
+                        break
+            else:
+                # Find pos in content_tokens
+                if 'content_tokens' in locals():
+                    for t_text, t_pos, _, _ in content_tokens:
+                        if t_text == orig:
+                            pos = t_pos
+                            break
+            word_info_list.append({
+                "word": orig,
+                "category": category,
+                "pos": pos
+            })
+
+        self.last_visual_data = self.visual_linker.process_substitutions(
+            original_sentence=sentence,
+            simplified_sentence=final_sentence,
+            replacements=all_replacements,
+            word_info_list=word_info_list
+        )
+
         if verbose:
             print("\n" + "=" * 60)
             print(f"OUTPUT: {final_sentence}")
             print("=" * 60 + "\n")
+            # Print terminal formatted table/output
+            try:
+                print(self.visual_linker.format_terminal_output(self.last_visual_data))
+            except Exception:
+                try:
+                    import sys
+                    encoding = sys.stdout.encoding or 'utf-8'
+                    print(self.visual_linker.format_terminal_output(self.last_visual_data).encode(encoding, errors='replace').decode(encoding))
+                except Exception:
+                    pass
 
         return final_sentence

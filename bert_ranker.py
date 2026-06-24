@@ -129,7 +129,7 @@ class GatedFusionRanker(nn.Module):
             self.net[0].bias.fill_(-1.0)
 
     def forward(self, features: torch.Tensor) -> torch.Tensor:
-        if not getattr(self, 'is_trained', False):
+        if not getattr(self, 'is_trained', False) and not self.training:
             # Deterministic starting weights:
             # 0.15 MLM, 0.40 SBERT, 0.15 surp, 0.15 fluency, 0.10 zipf, 0.05 glove
             # Scaled by 4 for sigmoid range
@@ -259,9 +259,9 @@ class GatedFusionRanker(nn.Module):
                         pos_f = fi if vi > vj else fj
                         neg_f = fj if vi > vj else fi
                         pos_s = self.forward(
-                            pos_f.unsqueeze(0).to(device))
+                            pos_f.unsqueeze(0).to(device)).squeeze(-1)
                         neg_s = self.forward(
-                            neg_f.unsqueeze(0).to(device))
+                            neg_f.unsqueeze(0).to(device)).squeeze(-1)
                         target_t = torch.ones(1).to(device)
                         loss = margin_crit(pos_s, neg_s, target_t)
                         optimizer.zero_grad()

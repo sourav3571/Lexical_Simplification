@@ -404,6 +404,7 @@ class BERTCandidateGenerator:
         chosen_sense,
         sense_conf:   float,
         nlp=None,
+        precomputed_sent_sim: float = None,
     ) -> bool:
         cand_l = cand.lower()
         if cand_l == orig_word.lower():
@@ -426,18 +427,23 @@ class BERTCandidateGenerator:
 
         # ── SBERT sentence similarity > 0.90 ────────────────────────────────
         cand_sentence = sentence[:start_char] + cand_l + sentence[end_char:]
-        if self._sbert.available:
-            sent_sim = self._sbert.similarity(sentence, cand_sentence)
+        if precomputed_sent_sim is not None:
+            sent_sim = precomputed_sent_sim
             if sent_sim < self.MIN_SENT_SIM:
                 return False
         else:
-            # Fallback: BERT CLS cosine
-            cand_sent_emb = self._get_sentence_emb_bert(cand_sentence)
-            sent_sim = F.cosine_similarity(
-                orig_sent_emb.unsqueeze(0),
-                cand_sent_emb.unsqueeze(0)).item()
-            if sent_sim < self.MIN_SENT_SIM:
-                return False
+            if self._sbert.available:
+                sent_sim = self._sbert.similarity(sentence, cand_sentence)
+                if sent_sim < self.MIN_SENT_SIM:
+                    return False
+            else:
+                # Fallback: BERT CLS cosine
+                cand_sent_emb = self._get_sentence_emb_bert(cand_sentence)
+                sent_sim = F.cosine_similarity(
+                    orig_sent_emb.unsqueeze(0),
+                    cand_sent_emb.unsqueeze(0)).item()
+                if sent_sim < self.MIN_SENT_SIM:
+                    return False
 
         # ── Word-level BERT cosine similarity > 0.75 ────────────────────────
         cand_word_emb = self._get_word_emb(cand_sentence, cand_l, start_char)
@@ -590,19 +596,38 @@ class BERTCandidateGenerator:
         if not cheap_candidates:
             return []
 
+        # Batch encode sentence similarity
+        sent_sims = {}
+        if self._sbert.available:
+            import numpy as np
+            orig_emb = self._sbert._model.encode(
+                sentence, convert_to_numpy=True, normalize_embeddings=True)
+            cand_sentences = [sentence[:start_char] + cand.lower() + sentence[end_char:] for cand in cheap_candidates]
+            cand_embs = self._sbert._model.encode(
+                cand_sentences, convert_to_numpy=True, normalize_embeddings=True, show_progress_bar=False)
+            sim_scores = np.dot(cand_embs, orig_emb)
+            for cand, score in zip(cheap_candidates, sim_scores):
+                sent_sims[cand.lower()] = float(score)
+
         # Pre-compute BERT embeddings for original
         orig_word_emb = self._get_word_emb(sentence, target_word, start_char)
         orig_sent_emb = self._get_sentence_emb_bert(sentence)
 
         filtered: List[str] = []
         for cand in cheap_candidates:
+            cand_l = cand.lower()
+            precomputed_sim = sent_sims.get(cand_l)
+            if precomputed_sim is not None and precomputed_sim < self.MIN_SENT_SIM:
+                continue
+            
             if self._passes_filters(
                 cand, target_word, sentence, start_char, end_char,
                 pos_tag or '', orig_zipf, all_probs,
                 orig_word_emb, orig_sent_emb,
                 chosen_sense, sense_conf, nlp,
+                precomputed_sent_sim=precomputed_sim
             ):
-                filtered.append(cand.lower())
+                filtered.append(cand_l)
 
         return filtered
 
