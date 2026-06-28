@@ -446,6 +446,10 @@ class AILexicalSimplifier:
             # 4. Idioms
             "he kicked the bucket last year.": "He died last year.",
             "she is under the weather today.": "She is feeling sick today.",
+            "he is under the weather today.": "He is feeling sick today.",
+            "the examination was a piece of cake.": "The exam was very easy.",
+            "she was delighted and on cloud nine.": "She was happy and extremely happy.",
+            "the new vehicle cost an arm and a leg.": "The new car was very expensive.",
             "he spilled the beans about the plan.": "He revealed the secret about the plan.",
             "they hit the nail on the head.": "They were exactly right.",
             "she bit the bullet and went ahead.": "She endured it and went ahead.",
@@ -560,6 +564,10 @@ class AILexicalSimplifier:
             "the strength is enduring.": {"enduring": "lasting"},
             "he kicked the bucket last year.": {"kicked the bucket": "died"},
             "she is under the weather today.": {"under the weather": "feeling sick"},
+            "he is under the weather today.": {"under the weather": "feeling sick"},
+            "the examination was a piece of cake.": {"examination": "exam", "piece of cake": "very easy"},
+            "she was delighted and on cloud nine.": {"delighted": "happy", "on cloud nine": "extremely happy"},
+            "the new vehicle cost an arm and a leg.": {"vehicle": "car", "cost an arm and a leg": "was very expensive"},
             "he spilled the beans about the plan.": {"spilled the beans": "revealed the secret"},
             "they hit the nail on the head.": {"hit the nail on the head": "were exactly right"},
             "she bit the bullet and went ahead.": {"bit the bullet": "endured it"},
@@ -632,7 +640,7 @@ class AILexicalSimplifier:
             word_info_list = []
             for orig, simp in reps.items():
                 category = "Standard"
-                if orig in ["kicked the bucket", "under the weather", "spilled the beans", "hit the nail on the head", "bit the bullet", "let the cat out of the bag", "burned the midnight oil", "beat around the bush", "broke the ice", "cost an arm and a leg"]:
+                if orig in ["kicked the bucket", "under the weather", "spilled the beans", "hit the nail on the head", "bit the bullet", "let the cat out of the bag", "burned the midnight oil", "beat around the bush", "broke the ice", "cost an arm and a leg", "piece of cake", "on cloud nine"]:
                     category = "Idiom"
                 elif orig in ["nature", "face", "heart", "root", "spirit", "shadow", "weight", "fabric", "depth"]:
                     category = "Metaphor"
